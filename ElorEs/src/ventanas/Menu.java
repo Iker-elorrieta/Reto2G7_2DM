@@ -1,16 +1,12 @@
 package ventanas;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JToolBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import java.awt.Color;
 
 public class Menu extends JFrame {
@@ -50,7 +46,7 @@ public class Menu extends JFrame {
 		menuBar.setBounds(0, 0, 1144, 44);
 		contentPane.add(menuBar);
 		
-		JMenu mnNewMenu = new JMenu("Menu");
+		JMenu mnNewMenu = new JMenu("Menu             ");
 		mnNewMenu.setForeground(new Color(255, 255, 255));
 		menuBar.add(mnNewMenu);
 		
@@ -62,6 +58,17 @@ public class Menu extends JFrame {
 		
 		JMenuItem menuItemHorario = new JMenuItem("Horario");
 		mnNewMenu.add(menuItemHorario);
+		
+		JMenuItem menuItemOtrosHorarios = new JMenuItem("Otros horarios");
+		mnNewMenu.add(menuItemOtrosHorarios);
+		
+		JMenuItem MenuItemCrearReunion = new JMenuItem("Crear reunión");
+		mnNewMenu.add(MenuItemCrearReunion);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(0, 44, 1144, 627);
+		contentPane.add(panel);
+		panel.setLayout(null);
 
 	}
 }
