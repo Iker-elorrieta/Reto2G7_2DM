@@ -1,4 +1,4 @@
-package pojos;
+package modelo;
 // Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final
 
 import java.util.HashSet;
@@ -9,13 +9,17 @@ import java.util.Set;
  */
 public class Modulos implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Ciclos ciclos;
 	private String nombre;
 	private String nombreEus;
 	private int horas;
 	private byte curso;
-	private Set horarioses = new HashSet(0);
+	private Set<Horarios> horarios = new HashSet<Horarios>(0);
 
 	public Modulos() {
 	}
@@ -27,13 +31,13 @@ public class Modulos implements java.io.Serializable {
 		this.curso = curso;
 	}
 
-	public Modulos(Ciclos ciclos, String nombre, String nombreEus, int horas, byte curso, Set horarioses) {
+	public Modulos(Ciclos ciclos, String nombre, String nombreEus, int horas, byte curso, Set<Horarios>horarios) {
 		this.ciclos = ciclos;
 		this.nombre = nombre;
 		this.nombreEus = nombreEus;
 		this.horas = horas;
 		this.curso = curso;
-		this.horarioses = horarioses;
+		this.horarios = horarios;
 	}
 
 	public Integer getId() {
@@ -84,12 +88,12 @@ public class Modulos implements java.io.Serializable {
 		this.curso = curso;
 	}
 
-	public Set getHorarioses() {
-		return this.horarioses;
+	public Set<Horarios> getHorarioses() {
+		return this.horarios;
 	}
 
-	public void setHorarioses(Set horarioses) {
-		this.horarioses = horarioses;
+	public void setHorarioses(Set<Horarios> horarios) {
+		this.horarios = horarios;
 	}
 
 }

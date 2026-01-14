@@ -1,4 +1,4 @@
-package pojos;
+package modelo;
 // Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final
 
 import java.util.HashSet;
@@ -9,10 +9,14 @@ import java.util.Set;
  */
 public class Tipos implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String name;
 	private String nameEu;
-	private Set userses = new HashSet(0);
+	private Set<Users> users = new HashSet<Users>(0);
 
 	public Tipos() {
 	}
@@ -21,10 +25,10 @@ public class Tipos implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public Tipos(String name, String nameEu, Set userses) {
+	public Tipos(String name, String nameEu, Set<Users> userses) {
 		this.name = name;
 		this.nameEu = nameEu;
-		this.userses = userses;
+		this.users = userses;
 	}
 
 	public Integer getId() {
@@ -51,12 +55,12 @@ public class Tipos implements java.io.Serializable {
 		this.nameEu = nameEu;
 	}
 
-	public Set getUserses() {
-		return this.userses;
+	public Set<Users> getUserses() {
+		return this.users;
 	}
 
-	public void setUserses(Set userses) {
-		this.userses = userses;
+	public void setUserses(Set<Users> users) {
+		this.users = users;
 	}
 
 }

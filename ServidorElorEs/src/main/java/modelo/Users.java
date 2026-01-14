@@ -1,4 +1,4 @@
-package pojos;
+package modelo;
 // Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final
 
 import java.sql.Timestamp;
@@ -10,6 +10,10 @@ import java.util.Set;
  */
 public class Users implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Tipos tipos;
 	private String email;
@@ -24,10 +28,10 @@ public class Users implements java.io.Serializable {
 	private String argazkiaUrl;
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
-	private Set matriculacioneses = new HashSet(0);
-	private Set reunionesesForAlumnoId = new HashSet(0);
-	private Set horarioses = new HashSet(0);
-	private Set reunionesesForProfesorId = new HashSet(0);
+	private Set<Matriculaciones> matriculaciones = new HashSet<Matriculaciones>(0);
+	private Set<Reuniones> reunionesForAlumnoId = new HashSet<Reuniones>(0);
+	private Set<Horarios> horarios = new HashSet<Horarios>(0);
+	private Set<Reuniones> reunionesForProfesorId = new HashSet<Reuniones>(0);
 
 	public Users() {
 	}
@@ -41,8 +45,8 @@ public class Users implements java.io.Serializable {
 
 	public Users(Tipos tipos, String email, String username, String password, String nombre, String apellidos,
 			String dni, String direccion, String telefono1, String telefono2, String argazkiaUrl, Timestamp createdAt,
-			Timestamp updatedAt, Set matriculacioneses, Set reunionesesForAlumnoId, Set horarioses,
-			Set reunionesesForProfesorId) {
+			Timestamp updatedAt, Set<Matriculaciones> matriculaciones, Set<Reuniones> reunionesForAlumnoId, Set<Horarios> horarios,
+			Set<Reuniones> reunionesForProfesorId) {
 		this.tipos = tipos;
 		this.email = email;
 		this.username = username;
@@ -56,10 +60,10 @@ public class Users implements java.io.Serializable {
 		this.argazkiaUrl = argazkiaUrl;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
-		this.matriculacioneses = matriculacioneses;
-		this.reunionesesForAlumnoId = reunionesesForAlumnoId;
-		this.horarioses = horarioses;
-		this.reunionesesForProfesorId = reunionesesForProfesorId;
+		this.matriculaciones = matriculaciones;
+		this.reunionesForAlumnoId = reunionesForAlumnoId;
+		this.horarios = horarios;
+		this.reunionesForProfesorId = reunionesForProfesorId;
 	}
 
 	public Integer getId() {
@@ -174,36 +178,36 @@ public class Users implements java.io.Serializable {
 		this.updatedAt = updatedAt;
 	}
 
-	public Set getMatriculacioneses() {
-		return this.matriculacioneses;
+	public Set<Matriculaciones> getMatriculaciones() {
+		return this.matriculaciones;
 	}
 
-	public void setMatriculacioneses(Set matriculacioneses) {
-		this.matriculacioneses = matriculacioneses;
+	public void setMatriculaciones(Set<Matriculaciones> matriculaciones) {
+		this.matriculaciones = matriculaciones;
 	}
 
-	public Set getReunionesesForAlumnoId() {
-		return this.reunionesesForAlumnoId;
+	public Set<Reuniones> getReunionesesForAlumnoId() {
+		return this.reunionesForAlumnoId;
 	}
 
-	public void setReunionesesForAlumnoId(Set reunionesesForAlumnoId) {
-		this.reunionesesForAlumnoId = reunionesesForAlumnoId;
+	public void setReunionesForAlumnoId(Set<Reuniones> reunionesForAlumnoId) {
+		this.reunionesForAlumnoId = reunionesForAlumnoId;
 	}
 
-	public Set getHorarioses() {
-		return this.horarioses;
+	public Set<Horarios> getHorarios() {
+		return this.horarios;
 	}
 
-	public void setHorarioses(Set horarioses) {
-		this.horarioses = horarioses;
+	public void setHorarios(Set<Horarios> horarios) {
+		this.horarios = horarios;
 	}
 
-	public Set getReunionesesForProfesorId() {
-		return this.reunionesesForProfesorId;
+	public Set<Reuniones> getReunionesForProfesorId() {
+		return this.reunionesForProfesorId;
 	}
 
-	public void setReunionesesForProfesorId(Set reunionesesForProfesorId) {
-		this.reunionesesForProfesorId = reunionesesForProfesorId;
+	public void setReunionesesForProfesorId(Set<Reuniones> reunionesesForProfesorId) {
+		this.reunionesForProfesorId = reunionesesForProfesorId;
 	}
 
 }

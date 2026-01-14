@@ -1,4 +1,4 @@
-package pojos;
+package modelo;
 // Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final
 
 import java.sql.Timestamp;
@@ -8,6 +8,10 @@ import java.sql.Timestamp;
  */
 public class Horarios implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Users users;
 	private Modulos modulos;
