@@ -110,7 +110,8 @@ public class Login extends JFrame {
 
                 String usuario = txtUsuario.getText();
                 String pwd = new String(pwdField.getPassword());
-
+                boolean correcto = false;
+                
                 try {
                     envia = new DataOutputStream(cliente.getOutputStream());
                     recibe = new DataInputStream(cliente.getInputStream());
@@ -119,15 +120,22 @@ public class Login extends JFrame {
                     envia.writeUTF(usuario);
                     envia.writeUTF(pwd);
 
-                   
+                    //Recibe lo que ha interpretado el servidor
+                    correcto = recibe.readBoolean();
+                    if(correcto == true) {
+                    	System.out.println(recibe.readUTF());
+                    	Menu frame = new Menu();
+                        frame.setVisible(true);
+                        dispose();
+                    } else {
+                    	System.out.println(recibe.readUTF());
+                    }
 
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
 
-                Menu frame = new Menu();
-                frame.setVisible(true);
-                dispose();
+              
             }
         });
         btnLogin.setBounds(106, 531, 98, 47);

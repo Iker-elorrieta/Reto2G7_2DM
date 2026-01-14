@@ -5,10 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ServidorMain {
+public class SpringbootMain {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ServidorMain.class, args);
+		SpringApplication.run(SpringbootMain.class, args);
 		
 	}
 
