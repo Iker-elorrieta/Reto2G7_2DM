@@ -1,4 +1,4 @@
-package modelo;
+package com.example.ProyectoSpringboot.modelo;
 // Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final
 
 import java.util.HashSet;
@@ -88,11 +88,11 @@ public class Modulos implements java.io.Serializable {
 		this.curso = curso;
 	}
 
-	public Set<Horarios> getHorarioses() {
+	public Set<Horarios> getHorarios() {
 		return this.horarios;
 	}
 
-	public void setHorarioses(Set<Horarios> horarios) {
+	public void setHorarios(Set<Horarios> horarios) {
 		this.horarios = horarios;
 	}
 

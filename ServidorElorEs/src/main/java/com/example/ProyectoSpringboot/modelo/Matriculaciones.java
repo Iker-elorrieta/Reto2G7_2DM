@@ -1,4 +1,4 @@
-package modelo;
+package com.example.ProyectoSpringboot.modelo;
 // Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final
 
 import java.sql.Date;

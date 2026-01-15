@@ -1,7 +1,7 @@
 package controlador;
 
-import modelo.GestorLogin;
-import modelo.Users;
+import com.example.ProyectoSpringboot.modelo.GestorLogin;
+import com.example.ProyectoSpringboot.modelo.Users;
 
 public class Controlador {
 	private GestorLogin gestLogin = new GestorLogin();

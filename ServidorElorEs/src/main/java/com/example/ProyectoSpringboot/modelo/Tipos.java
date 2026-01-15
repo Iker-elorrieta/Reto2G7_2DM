@@ -1,4 +1,4 @@
-package modelo;
+package com.example.ProyectoSpringboot.modelo;
 // Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final
 
 import java.util.HashSet;
@@ -55,11 +55,11 @@ public class Tipos implements java.io.Serializable {
 		this.nameEu = nameEu;
 	}
 
-	public Set<Users> getUserses() {
+	public Set<Users> getUsers() {
 		return this.users;
 	}
 
-	public void setUserses(Set<Users> users) {
+	public void setUsers(Set<Users> users) {
 		this.users = users;
 	}
 

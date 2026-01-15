@@ -1,4 +1,4 @@
-package modelo;
+package com.example.ProyectoSpringboot.modelo;
 // Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final
 
 import java.sql.Timestamp;
@@ -186,7 +186,7 @@ public class Users implements java.io.Serializable {
 		this.matriculaciones = matriculaciones;
 	}
 
-	public Set<Reuniones> getReunionesesForAlumnoId() {
+	public Set<Reuniones> getReunionesForAlumnoId() {
 		return this.reunionesForAlumnoId;
 	}
 
@@ -206,7 +206,7 @@ public class Users implements java.io.Serializable {
 		return this.reunionesForProfesorId;
 	}
 
-	public void setReunionesesForProfesorId(Set<Reuniones> reunionesesForProfesorId) {
+	public void setReunionesForProfesorId(Set<Reuniones> reunionesesForProfesorId) {
 		this.reunionesForProfesorId = reunionesesForProfesorId;
 	}
 

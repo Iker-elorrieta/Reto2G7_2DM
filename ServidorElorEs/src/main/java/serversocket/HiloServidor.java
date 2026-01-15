@@ -3,19 +3,22 @@ package serversocket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.example.ProyectoSpringboot.modelo.Users;
+
 import controlador.Controlador;
-import modelo.GestorLogin;
-import modelo.Users;
 
 public class HiloServidor extends Thread{
 	private Socket cliente;
-	private DataInputStream recibe;
-	private DataOutputStream envia;
-	private GestorLogin gestLogin;
+	private DataInputStream recibeParametro;
+	private DataOutputStream enviaParametro;
+	private ObjectInputStream recibeObjeto;
+	private ObjectOutputStream enviaObjeto;
 	private Controlador ctr = new Controlador();
 	private Users user;
 	
@@ -25,13 +28,12 @@ public class HiloServidor extends Thread{
 	
 	public void run() {
 		try {
-			recibe = new DataInputStream(cliente.getInputStream());
-			envia = new DataOutputStream(cliente.getOutputStream());
-			gestLogin = new GestorLogin();
+			recibeParametro = new DataInputStream(cliente.getInputStream());
+			enviaParametro = new DataOutputStream(cliente.getOutputStream());
 			
 			//Recibe los datos que introduce el cliente en el login y la contraseña la hashea
-			String usuario = recibe.readUTF();
-			String pwd = recibe.readUTF();
+			String usuario = recibeParametro.readUTF();
+			String pwd = recibeParametro.readUTF();
 			String hash = hash(pwd);
 			
 			user = ctr.verificarDatosLogIn(usuario, hash);
@@ -41,13 +43,13 @@ public class HiloServidor extends Thread{
 				String claveRegistradaHash = hash(claveRegistrada);
 				
 				if(usuario.equals(usuarioRegistrado) && hash.equals(claveRegistradaHash)) {
-					envia.writeBoolean(true);
-					envia.writeUTF("Inicio de sesión correcto");
+					enviaParametro.writeBoolean(true);
+					enviaParametro.writeUTF("Inicio de sesión correcto");
 				} else {
-					envia.writeUTF("Usuario o contraseña erróneos");
+					enviaParametro.writeUTF("Usuario o contraseña erróneos");
 				}
 			} else {
-				envia.writeUTF("El usuario no existe");
+				enviaParametro.writeUTF("El usuario no existe");
 			}
 			
 		} catch (IOException e) {

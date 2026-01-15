@@ -1,4 +1,4 @@
-package modelo;
+package com.example.ProyectoSpringboot.modelo;
 
 
 import org.hibernate.Session;

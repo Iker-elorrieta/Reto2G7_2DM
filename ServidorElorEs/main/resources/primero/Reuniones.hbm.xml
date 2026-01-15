@@ -1,17 +1,23 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Generated 14 ene 2026, 8:32:20 by Hibernate Tools 6.5.1.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
 <hibernate-mapping>
-    <class catalog="eduelorrieta" name="primero.Reuniones" optimistic-lock="none" table="reuniones">
+    <class catalog="eduelorrieta" name="com.example.ProyectoSpringboot.modelo.Reuniones" optimistic-lock="none" table="reuniones">
         <id name="idReunion" type="java.lang.Integer">
             <column name="id_reunion"/>
             <generator class="identity"/>
         </id>
-        <many-to-one class="primero.Users" fetch="select" name="usersByAlumnoId">
+
+        <many-to-one class="com.example.ProyectoSpringboot.modelo.Users" fetch="select" name="usersByAlumnoId">
             <column name="alumno_id"/>
         </many-to-one>
-        <many-to-one class="primero.Users" fetch="select" name="usersByProfesorId">
+
+        <many-to-one class="com.example.ProyectoSpringboot.modelo.Users" fetch="select" name="usersByProfesorId">
             <column name="profesor_id"/>
         </many-to-one>
+
         <property name="estado" type="string">
             <column length="10" name="estado"/>
         </property>
