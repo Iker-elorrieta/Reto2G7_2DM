@@ -3,8 +3,8 @@ package serversocket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+//import java.io.ObjectInputStream;
+//import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -17,8 +17,8 @@ public class HiloServidor extends Thread{
 	private Socket cliente;
 	private DataInputStream recibeParametro;
 	private DataOutputStream enviaParametro;
-	private ObjectInputStream recibeObjeto;
-	private ObjectOutputStream enviaObjeto;
+	//private ObjectInputStream recibeObjeto;
+	//private ObjectOutputStream enviaObjeto;
 	private Controlador ctr = new Controlador();
 	private Users user;
 	

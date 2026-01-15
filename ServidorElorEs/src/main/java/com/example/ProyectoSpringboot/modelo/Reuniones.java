@@ -3,6 +3,8 @@ package com.example.ProyectoSpringboot.modelo;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 
 /**
@@ -15,7 +17,9 @@ public class Reuniones implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer idReunion;
+	@JsonIgnore
 	private Users usersByAlumnoId;
+	@JsonIgnore
 	private Users usersByProfesorId;
 	private String estado;
 	private String estadoEus;

@@ -23,8 +23,6 @@ public class SocketServer {
 				
 			}
 			
-		
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

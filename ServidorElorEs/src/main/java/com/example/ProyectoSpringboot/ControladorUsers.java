@@ -19,7 +19,7 @@ import com.example.ProyectoSpringboot.modelo.Users;
 import controlador.HibernateUtil;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 
 public class ControladorUsers {
 
@@ -30,7 +30,6 @@ public class ControladorUsers {
 	    List<Users> listaUsuarios = session.createQuery("FROM Users", Users.class).list();
 	    session.close();
 
-	    System.out.println("Usuarios recuperados: " + listaUsuarios.size());
 	    return listaUsuarios;
 	}
 

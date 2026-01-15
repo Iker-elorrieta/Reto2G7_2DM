@@ -15,7 +15,7 @@
         </id>
 
         <many-to-one class="com.example.ProyectoSpringboot.modelo.Tipos"
-                     fetch="select"
+                     fetch="join"
                      name="tipos">
             <column name="tipo_id" not-null="true"/>
         </many-to-one>
