@@ -28,7 +28,7 @@ public class ControladorUsers {
 	public List<Users> obtenerUsuarios() {
 	    Session session = session();
 	    List<Users> listaUsuarios = session.createQuery("FROM Users", Users.class).list();
-	    session.close();
+	    //session.close();
 
 	    return listaUsuarios;
 	}
@@ -86,7 +86,7 @@ public class ControladorUsers {
 			 * 
 			 * u.setUsername(datos.getUsername())*/
 			
-			session.merge(null); //cambiar parametro 
+			//session.merge(); //cambiar parametro 
 			tx.commit();
 			session.close();
 			

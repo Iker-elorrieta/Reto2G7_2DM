@@ -1,5 +1,7 @@
 package controlador;
 
+import java.io.IOException;
+
 import com.example.ProyectoSpringboot.modelo.GestorLogin;
 import com.example.ProyectoSpringboot.modelo.Users;
 
@@ -8,9 +10,10 @@ public class Controlador {
 
  
 
-	public Users verificarDatosLogIn(String usuario, String pwd) {
+	public Users verificarDatosLogIn(String usuario, String hash) throws IOException {
 		// TODO Auto-generated method stub
-		Users u = gestLogin.verificarDatosLogIn(usuario, pwd);
+		Users u = null;
+		u = gestLogin.verificarDatosLogIn(usuario, hash);
 		return u;
 	}
 	

@@ -1,34 +1,98 @@
 package com.example.ProyectoSpringboot.modelo;
 
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
-import controlador.HibernateUtil;
+
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 
 public class GestorLogin {
+	
+	private static final String BASE_URL = "http://localhost:8080/users";
 
-	public Users verificarDatosLogIn(String usuario, String pwd) {
-		// TODO Auto-generated method stub
-		Session session = session();
-		Users user = null;
-		String query = "from Users where username = :usuario AND password = :pwd";
-		Query<Users> q = session.createQuery(query, Users.class);
-		q.setParameter("usuario", usuario); 
-		q.setParameter("pwd", pwd);
-		user = q.uniqueResult();
+	
+	public Users verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException{
+		//Llamamos a la API para traer todos los usuarios
+		URL url = new URL(BASE_URL);
+		Users usuarioEncontrado = null; //Usuario que vamos a devolver si encuentra y coincide
 		
-		session.close();
+		//LLamamos a la api y nos devuelve un JSON
+		HttpURLConnection conexion = (HttpURLConnection) url.openConnection();
+		conexion.setRequestMethod("GET");
+		conexion.setRequestProperty("Accept", "application/json");
 		
-		return user;
+		int status = conexion.getResponseCode();
+		if(status != 200) {
+			usuarioEncontrado = null;
+		}
+		
+		//Leemos el JSON
+		BufferedReader leer = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+		//Junta todas las lineas del JSON en un solo string
+		StringBuilder response = new StringBuilder(); 
+		String line;
+		
+		while((line = leer.readLine()) != null) {
+			response.append(line);
+		}
+		
+		leer.close();
+		conexion.disconnect();
+		
+		//Convertimos el JSON en una List<Users>
+		Gson gson = new Gson();
+		Type listType = new TypeToken<List<Users>>() {}.getType(); //Esta es clave para que no devuelva una lista generica y devuelva una lista de Users
+		List<Users> usuarios = gson.fromJson(response.toString(), listType);
+		
+		
+		
+		//Buscamos al usuario que coincida con el usuario introducido
+		//Cuando lo encuentra recoge la contraseña y la hashea
+		//Compara los 2 hashes, el introducido(ya hasheado) y el encontrado (hasheado ahora)
+		
+		for(int i = 0; i < usuarios.size(); i ++) {
+			Users u = usuarios.get(i);
+			
+			if(u.getUsername().equals(usuario)) {//Busqueda de usuario y mando la contraseña a hashear
+				String pwdHashBD = hash(u.getPassword());
+				
+				if(pwdHashBD.equals(hashIntroducido)) { //Comparo las contraseñas
+					usuarioEncontrado = u; //Asociamos el usuario encontrado a la variable declarada arriba
+				} else {
+					usuarioEncontrado = null;
+				}
+			}
+		}
+		
+		return usuarioEncontrado;
 	}
 	
-	private Session session() {
-		// TODO Auto-generated method stub
-		SessionFactory sesion = HibernateUtil.getSessionFactory();
-		Session session = sesion.openSession();
-		return session;
+	
+	private String hash(String pwd) {
+		String pwdHasheada = new String();
+
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA");
+			byte dataBytes[] = pwd.getBytes();
+			md.update(dataBytes);
+			byte resumen[] = md.digest();
+			pwdHasheada = new String(resumen);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pwdHasheada;
 	}
 
 }

@@ -21,6 +21,7 @@ public class ControladorCiclos {
 	public List<Ciclos> obtenerCiclos(){
 		Session session = session();
 		List<Ciclos> listaCiclos = session.createQuery("FROM Ciclos", Ciclos.class).list();
+		
 		return listaCiclos;
 	}
 	
