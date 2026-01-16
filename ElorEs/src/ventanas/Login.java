@@ -4,6 +4,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.google.gson.Gson;
+
 import java.awt.Color;
 import javax.swing.JTextField;
 import java.awt.Font;
@@ -13,12 +16,12 @@ import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
+
 
 public class Login extends JFrame {
 
@@ -29,46 +32,30 @@ public class Login extends JFrame {
     private JPasswordField pwdField;
     private DataOutputStream enviaParametro;
     private DataInputStream recibeParametro;
-    private ObjectInputStream recibeObjeto;
     private JLabel lblAvisoError;
 
-    /**
-     * Launch the application.
-     */
     public static void main(String[] args) {
-    	
-    	//Se inicia la conexion con el servidor antes de que se inicie la ventana
-    	
+
         try {
             cliente = new Socket("localhost", 4000);
             System.out.println("Conectado al servidor");
-            
-            
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    try {
-                        Login frame = new Login();
-                        frame.setVisible(true);
-                    } catch (Exception e) {
-                        System.out.println("No es posible conectar con el servidor");
-                    }
+
+            EventQueue.invokeLater(() -> {
+                try {
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    System.out.println("No es posible conectar con el servidor");
                 }
             });
-            
-        } catch (UnknownHostException ee) {
-        	System.out.println("**No es posible conectar con el servidor**");
+
         } catch (IOException ee) {
-        	System.out.println("**No es posible conectar con el servidor**");
+            System.out.println("**No es posible conectar con el servidor**");
         }
-        
     }
 
-    /**
-     * Create the frame.
-     */
     public Login() {
-    	setResizable(false);
-
+        setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1160, 710);
         contentPane = new JPanel();
@@ -86,11 +73,10 @@ public class Login extends JFrame {
         txtUsuario.setFont(new Font("Arial", Font.PLAIN, 15));
         txtUsuario.setBounds(59, 348, 192, 33);
         panel.add(txtUsuario);
-        txtUsuario.setColumns(10);
 
         JLabel lblNewLabel = new JLabel("Contraseña");
         lblNewLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        lblNewLabel.setForeground(new Color(255, 255, 255));
+        lblNewLabel.setForeground(Color.WHITE);
         lblNewLabel.setBounds(59, 415, 108, 23);
         panel.add(lblNewLabel);
 
@@ -101,53 +87,62 @@ public class Login extends JFrame {
 
         JLabel lblNewLabel_1 = new JLabel("Usuario");
         lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 14));
-        lblNewLabel_1.setForeground(new Color(255, 255, 255));
+        lblNewLabel_1.setForeground(Color.WHITE);
         lblNewLabel_1.setBounds(59, 314, 108, 23);
         panel.add(lblNewLabel_1);
 
         JButton btnLogin = new JButton("Iniciar");
         btnLogin.setForeground(new Color(0, 128, 192));
         btnLogin.setFont(new Font("Arial", Font.BOLD, 15));
-        btnLogin.setBackground(new Color(255, 255, 255));
+        btnLogin.setBackground(Color.WHITE);
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
                 String usuario = txtUsuario.getText();
                 String pwd = new String(pwdField.getPassword());
-                boolean correcto = false;
-                
+
                 try {
                     enviaParametro = new DataOutputStream(cliente.getOutputStream());
                     recibeParametro = new DataInputStream(cliente.getInputStream());
-                    recibeObjeto = new ObjectInputStream(cliente.getInputStream());
-                    
-                    //Enviamos los datos introducidos al servidor
+
+                    //Enviar usuario y contraseña
                     enviaParametro.writeUTF(usuario);
                     enviaParametro.writeUTF(pwd);
 
-                    //Recibe el Usuario
-                    
+                    //Recibir respuesta del servidor
+                    String respuestaUsuario = recibeParametro.readUTF();
+
+                    if (!respuestaUsuario.equals("Usuario o contraseña erróneos")) {
+
+                        //Convertir JSON a Map
+                        Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
+                        
+                       
+
+                        //Abrir menú
+                        Menu frame = new Menu();
+                        frame.setVisible(true);
+                        dispose();
+
+                    } else {
+                        lblAvisoError.setText(respuestaUsuario);
+                        txtUsuario.setText("");
+                        pwdField.setText("");
+                    }
 
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                Menu frame = new Menu();
-                frame.setVisible(true);
-                dispose();
-              
             }
         });
+
         btnLogin.setBounds(107, 546, 98, 47);
         panel.add(btnLogin);
 
-        JPanel panelLogo = new JPanel();
-        panelLogo.setBounds(59, 65, 192, 187);
-        panel.add(panelLogo);
-        
         lblAvisoError = new JLabel("");
-        lblAvisoError.setForeground(new Color(255, 0, 0));
+        lblAvisoError.setForeground(new Color(179, 0, 4));
         lblAvisoError.setFont(new Font("Arial", Font.BOLD, 14));
-        lblAvisoError.setBounds(59, 502, 192, 33);
+        lblAvisoError.setBounds(39, 502, 232, 33);
         panel.add(lblAvisoError);
     }
 }
