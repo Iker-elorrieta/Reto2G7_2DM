@@ -13,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.awt.event.ActionEvent;
@@ -25,8 +27,10 @@ public class Login extends JFrame {
     private JTextField txtUsuario;
     private static Socket cliente;
     private JPasswordField pwdField;
-    private DataOutputStream envia;
-    private DataInputStream recibe;
+    private DataOutputStream enviaParametro;
+    private DataInputStream recibeParametro;
+    private ObjectInputStream recibeObjeto;
+    private JLabel lblAvisoError;
 
     /**
      * Launch the application.
@@ -113,36 +117,37 @@ public class Login extends JFrame {
                 boolean correcto = false;
                 
                 try {
-                    envia = new DataOutputStream(cliente.getOutputStream());
-                    recibe = new DataInputStream(cliente.getInputStream());
+                    enviaParametro = new DataOutputStream(cliente.getOutputStream());
+                    recibeParametro = new DataInputStream(cliente.getInputStream());
+                    recibeObjeto = new ObjectInputStream(cliente.getInputStream());
                     
                     //Enviamos los datos introducidos al servidor
-                    envia.writeUTF(usuario);
-                    envia.writeUTF(pwd);
+                    enviaParametro.writeUTF(usuario);
+                    enviaParametro.writeUTF(pwd);
 
-                    //Recibe lo que ha interpretado el servidor
-                    correcto = recibe.readBoolean();
-                    if(correcto == true) {
-                    	System.out.println(recibe.readUTF());
-                    	Menu frame = new Menu();
-                        frame.setVisible(true);
-                        dispose();
-                    } else {
-                    	System.out.println(recibe.readUTF());
-                    }
+                    //Recibe el Usuario
+                    
 
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-
+                Menu frame = new Menu();
+                frame.setVisible(true);
+                dispose();
               
             }
         });
-        btnLogin.setBounds(106, 531, 98, 47);
+        btnLogin.setBounds(107, 546, 98, 47);
         panel.add(btnLogin);
 
         JPanel panelLogo = new JPanel();
         panelLogo.setBounds(59, 65, 192, 187);
         panel.add(panelLogo);
+        
+        lblAvisoError = new JLabel("");
+        lblAvisoError.setForeground(new Color(255, 0, 0));
+        lblAvisoError.setFont(new Font("Arial", Font.BOLD, 14));
+        lblAvisoError.setBounds(59, 502, 192, 33);
+        panel.add(lblAvisoError);
     }
 }
