@@ -3,7 +3,7 @@ package controlador;
 import java.io.IOException;
 import java.util.Map;
 
-import com.example.ProyectoSpringboot.modelo.GestorLogin;
+import gestores.GestorLogin;
 
 public class Controlador {
     private GestorLogin gestLogin = new GestorLogin();

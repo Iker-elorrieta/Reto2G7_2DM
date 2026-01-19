@@ -18,9 +18,9 @@ import com.example.ProyectoSpringboot.modelo.Users;
 
 import controlador.HibernateUtil;
 
+
 @RestController
 @RequestMapping("/users")
-
 public class ControladorUsers {
 
 	//Obtiene todos los Usuarios

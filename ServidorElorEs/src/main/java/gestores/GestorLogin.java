@@ -1,4 +1,4 @@
-package com.example.ProyectoSpringboot.modelo;
+package gestores;
 
 
 import java.io.BufferedReader;
@@ -31,6 +31,7 @@ public class GestorLogin {
         conexion.setRequestMethod("GET");
         conexion.setRequestProperty("Accept", "application/json");
         
+        //Respuesta de la conexion
         int status = conexion.getResponseCode();
         if(status != 200) {
             usuarioEncontrado = null;
@@ -38,6 +39,7 @@ public class GestorLogin {
         
         //Leemos el JSON
         BufferedReader leer = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+        
         //Junta todas las lineas del JSON en un solo string
         StringBuilder response = new StringBuilder(); 
         String line;
@@ -69,13 +71,26 @@ public class GestorLogin {
             
             if(usernameBD.equals(usuario)) {//Busqueda de usuario y mando la contraseña a hashear
                 
-                String pwdHashBD = hash(passwordBD);
-                
-                if(pwdHashBD.equals(hashIntroducido)) { //Comparo las contraseñas
-                    usuarioEncontrado = u; //Asociamos el usuario encontrado a la variable declarada arriba
+            	//Compruebo el tipo de usuario
+                Map<String, Object> tipos = (Map<String, Object>) u.get("tipos"); 
+                String tipo = (String) tipos.get("name");
+            	
+                //Compruebo que sea profesor y si es profesor hashea la contraseña
+                //y asociamos el usuario encontrado
+                if(tipo.equalsIgnoreCase("profesor")) {
+                	
+                	 String pwdHashBD = hash(passwordBD);
+                     
+                     if(pwdHashBD.equals(hashIntroducido)) { //Comparo las contraseñas	
+                         usuarioEncontrado = u; //Asociamos el usuario encontrado a la variable declarada arriba
+                     } else {
+                         usuarioEncontrado = null;
+                     }
                 } else {
-                    usuarioEncontrado = null;
+                	usuarioEncontrado = null;
                 }
+
+               
             }
         }
         

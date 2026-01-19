@@ -8,25 +8,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.ProyectoSpringboot.modelo.Ciclos;
+import com.example.ProyectoSpringboot.modelo.Reuniones;
 
 import controlador.HibernateUtil;
 
 @RestController
-@RequestMapping("/ciclos")
-public class ControladorCiclos {
+@RequestMapping("/reuniones")
+public class ControladorReuniones {
 	
-	
-	//Opbtiene todos los ciclos
 	@GetMapping
-	public List<Ciclos> obtenerCiclos(){
-		Session session = session();
-		List<Ciclos> listaCiclos = session.createQuery("FROM Ciclos", Ciclos.class).list();
-		
-		return listaCiclos;
+	public List<Reuniones> obtenerReuniones() {
+	    Session session = session();
+	    List<Reuniones> listaReuniones = session.createQuery("FROM Reuniones", Reuniones.class).list();
+
+	    return listaReuniones;
 	}
-	
-	
 	
 	private Session session() {
 		// TODO Auto-generated method stub
