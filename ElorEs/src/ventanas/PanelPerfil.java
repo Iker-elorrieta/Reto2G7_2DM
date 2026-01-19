@@ -1,6 +1,5 @@
 package ventanas;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.util.Map;
 
@@ -17,10 +16,11 @@ public class PanelPerfil extends JPanel {
 
     public PanelPerfil(Map<String, Object> usuarioMap) {
         setLayout(null);
+	    setBounds(0, 0, 1144, 588); 
 
         JLabel lblNombre = new JLabel("Nombre:");
         lblNombre.setFont(new Font("Arial", Font.BOLD, 13));
-        lblNombre.setBounds(223, 56, 95, 14);
+        lblNombre.setBounds(223, 57, 95, 14);
         add(lblNombre);
 
         txtNombre = new JTextField();

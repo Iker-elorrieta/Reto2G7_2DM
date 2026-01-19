@@ -126,7 +126,8 @@ public class Login extends JFrame {
 
                         //Convertir JSON a Map
                     	//En esta variable estan todos los datos del usuario que ha iniciado sesion (reuniones, horarios...)
-                        Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
+                        @SuppressWarnings("unchecked")
+						Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
                         
                         //Abrir menú
                         Menu frame = new Menu(usuarioMap, cliente);
