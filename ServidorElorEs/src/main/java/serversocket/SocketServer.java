@@ -8,8 +8,7 @@ public class SocketServer {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			ServerSocket servidor = new ServerSocket(4000);
+		try (ServerSocket servidor = new ServerSocket(4000)) {
 			System.out.println("Servidor iniciado");
 			int contador = 0;
 			Socket cliente;

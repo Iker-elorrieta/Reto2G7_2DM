@@ -72,7 +72,8 @@ public class GestorLogin {
             if(usernameBD.equals(usuario)) {//Busqueda de usuario y mando la contraseña a hashear
                 
             	//Compruebo el tipo de usuario
-                Map<String, Object> tipos = (Map<String, Object>) u.get("tipos"); 
+                @SuppressWarnings("unchecked")
+				Map<String, Object> tipos = (Map<String, Object>) u.get("tipos"); 
                 String tipo = (String) tipos.get("name");
             	
                 //Compruebo que sea profesor y si es profesor hashea la contraseña
