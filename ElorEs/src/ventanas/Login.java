@@ -17,7 +17,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
@@ -28,7 +27,7 @@ public class Login extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTextField txtUsuario;
-    private static Socket cliente;
+    private Socket cliente;
     private JPasswordField pwdField;
     private DataOutputStream enviaParametro;
     private DataInputStream recibeParametro;
@@ -36,22 +35,16 @@ public class Login extends JFrame {
 
     public static void main(String[] args) {
 
-        try {
-            cliente = new Socket("localhost", 4000);
-            System.out.println("Conectado al servidor");
+    	EventQueue.invokeLater(() -> {
+    		try {
+    			Login frame = new Login();
+    			frame.setVisible(true);
+    		} catch (Exception e) {
+    			System.out.println("No es posible conectar con el servidor");
+    		}
+    	});
 
-            EventQueue.invokeLater(() -> {
-                try {
-                    Login frame = new Login();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    System.out.println("No es posible conectar con el servidor");
-                }
-            });
-
-        } catch (IOException ee) {
-            System.out.println("**No es posible conectar con el servidor**");
-        }
+        
     }
 
     public Login() {
@@ -68,28 +61,40 @@ public class Login extends JFrame {
         panel.setBounds(416, 0, 311, 671);
         contentPane.add(panel);
         panel.setLayout(null);
+        
+        //==========LOGO========
+        JPanel panelLogo = new JPanel();
+        panelLogo.setBounds(59, 59, 192, 208);
+        panel.add(panelLogo);   
+        JLabel lblLogo = new JLabel("*Logo*");
+        lblLogo.setFont(new Font("Tahoma", Font.ITALIC, 11));
+        panelLogo.add(lblLogo);
+        
+        //==========CAMPOS A RELLENAR===========
+        
+        JLabel lblUsuario = new JLabel("Usuario");
+        lblUsuario.setFont(new Font("Arial", Font.BOLD, 14));
+        lblUsuario.setForeground(Color.WHITE);
+        lblUsuario.setBounds(59, 314, 108, 23);
+        panel.add(lblUsuario);
 
         txtUsuario = new JTextField();
         txtUsuario.setFont(new Font("Arial", Font.PLAIN, 15));
         txtUsuario.setBounds(59, 348, 192, 33);
         panel.add(txtUsuario);
 
-        JLabel lblNewLabel = new JLabel("Contraseña");
-        lblNewLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        lblNewLabel.setForeground(Color.WHITE);
-        lblNewLabel.setBounds(59, 415, 108, 23);
-        panel.add(lblNewLabel);
+        JLabel lblContraseña = new JLabel("Contraseña");
+        lblContraseña.setFont(new Font("Arial", Font.BOLD, 14));
+        lblContraseña.setForeground(Color.WHITE);
+        lblContraseña.setBounds(59, 415, 108, 23);
+        panel.add(lblContraseña);
 
         pwdField = new JPasswordField();
         pwdField.setFont(new Font("Arial", Font.BOLD, 14));
         pwdField.setBounds(59, 449, 192, 33);
         panel.add(pwdField);
 
-        JLabel lblNewLabel_1 = new JLabel("Usuario");
-        lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 14));
-        lblNewLabel_1.setForeground(Color.WHITE);
-        lblNewLabel_1.setBounds(59, 314, 108, 23);
-        panel.add(lblNewLabel_1);
+        //========BOTON LOGIN==========
 
         JButton btnLogin = new JButton("Iniciar");
         btnLogin.setForeground(new Color(0, 128, 192));
@@ -102,6 +107,11 @@ public class Login extends JFrame {
                 String pwd = new String(pwdField.getPassword());
 
                 try {
+                	
+                	//Abrimos el socket dentro del boton de login
+                	cliente = new Socket("localhost", 4000);
+                    System.out.println("Conectado al servidor");
+                	
                     enviaParametro = new DataOutputStream(cliente.getOutputStream());
                     recibeParametro = new DataInputStream(cliente.getInputStream());
 
@@ -115,12 +125,11 @@ public class Login extends JFrame {
                     if (!respuestaUsuario.equals("Usuario o contraseña erróneos")) {
 
                         //Convertir JSON a Map
+                    	//En esta variable estan todos los datos del usuario que ha iniciado sesion (reuniones, horarios...)
                         Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
                         
-                       
-
                         //Abrir menú
-                        Menu frame = new Menu();
+                        Menu frame = new Menu(usuarioMap, cliente);
                         frame.setVisible(true);
                         dispose();
 
@@ -144,5 +153,7 @@ public class Login extends JFrame {
         lblAvisoError.setFont(new Font("Arial", Font.BOLD, 14));
         lblAvisoError.setBounds(39, 502, 232, 33);
         panel.add(lblAvisoError);
+        
+        
     }
 }
