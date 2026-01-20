@@ -3,20 +3,24 @@ package ventanas;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
+import java.awt.SystemColor;
 
 public class Menu extends JFrame {
 
@@ -24,11 +28,15 @@ public class Menu extends JFrame {
     private JPanel contentPane;
     private JPanel panelPrincipal;
     
-    //CardLayout para cambiar entre paneles y que no se solape la informacion
     private CardLayout cardLayout;
-   
 
     public Menu(Map<String, Object> usuarioMap, Socket cliente) {
+    	
+    	// Arreglar color azul del menú 
+    	UIManager.put("Menu.selectionBackground", new Color(0, 128, 192)); 
+    	UIManager.put("MenuItem.selectionBackground", new Color(0, 100, 160)); 
+    	UIManager.put("Menu.selectionForeground", Color.WHITE); 
+    	UIManager.put("MenuItem.selectionForeground", Color.WHITE);
 
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,8 +44,11 @@ public class Menu extends JFrame {
 
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        setContentPane(contentPane);
         contentPane.setLayout(null);
+
+        // Fondo general elegante
+        contentPane.setBackground(new Color(40, 40, 40));
+        setContentPane(contentPane);
 
         //----------------------------------------------------
         //    CARDLAYOUT Y PANEL PRINCIPAL
@@ -46,48 +57,45 @@ public class Menu extends JFrame {
         cardLayout = new CardLayout();
         panelPrincipal = new JPanel(cardLayout);
         panelPrincipal.setBounds(0, 83, 1144, 588);
-        contentPane.add(panelPrincipal);
 
-        //Paneles que se muestran en el cardLayout
+        // Borde elegante
+        panelPrincipal.setBackground(new Color(50, 50, 50));
+        panelPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new Color(80, 80, 80), 2));
+
+        contentPane.add(panelPrincipal);
 
         //---------------------------------------------------------
         //    PANEL HORARIOS
         //----------------------------------------------------------
-      
         PanelHorarios panelHorarios = new PanelHorarios(usuarioMap);
 
         //---------------------------------------------------------
         //    PANEL OTROS HORARIOS
         //----------------------------------------------------------
-        
         PanelOtrosHorarios panelOtrosHorarios = new PanelOtrosHorarios(usuarioMap);
 
         //---------------------------------------------------------
         //    PANEL REUNIONES
         //----------------------------------------------------------
-       
         PanelReuniones panelReuniones = new PanelReuniones(usuarioMap);
         
         //---------------------------------------------------------
         //    PANEL PERFIL
         //----------------------------------------------------------
-        
         PanelPerfil panelPerfil = new PanelPerfil(usuarioMap);
         
         //---------------------------------------------------------
         //    PANEL CREAR REUNION
         //----------------------------------------------------------
-        
         PanelCrearReunion panelCrearReunion = new PanelCrearReunion(usuarioMap);
         
         //---------------------------------------------------------
         //    PANEL ALUMNOS
         //----------------------------------------------------------
-        
         PanelAlumnos panelAlumnos = new PanelAlumnos(usuarioMap);
         
         //--------------------------------------------------------
-        //    AÑADIR LOS PANELES AL CARDLAYOUT CON UN NOMBRE
+        //    AÑADIR LOS PANELES AL CARDLAYOUT
         //-------------------------------------------------------
         
         panelPrincipal.add(panelHorarios, "horarios");
@@ -99,125 +107,125 @@ public class Menu extends JFrame {
         
 
         //---------------------------------------------------------
-        //    BARRA DE MENU
+        //    BARRA DE MENU (ESTILO ELEGANTE)
         //----------------------------------------------------------
         
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.setBounds(0, 0, 1144, 51);
-        menuBar.setBackground(new Color(0, 128, 192));
+        JMenuBar menuBar = new JMenuBar(); 
+        menuBar.setBounds(0, 0, 1144, 51); 
+        menuBar.setBackground(SystemColor.scrollbar); 
+        menuBar.setBorderPainted(false); 
+        menuBar.setLayout(new java.awt.BorderLayout()); 
         contentPane.add(menuBar);
 
-        JMenu mnNewMenu = new JMenu("");
-        mnNewMenu.setText("Menú     ");
-        mnNewMenu.setFont(new Font("Arial", Font.BOLD, 14)); 
-        mnNewMenu.setBackground(new Color(0, 128, 192)); 
-        mnNewMenu.setForeground(Color.BLACK); 
+        JMenu mnNewMenu = new JMenu("   Menú   ");
+        mnNewMenu.setBackground(new Color(240, 240, 240));
+        mnNewMenu.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        mnNewMenu.setForeground(Color.WHITE);
+        mnNewMenu.setOpaque(false);
         menuBar.add(mnNewMenu);
-
         
+     
+
         //------------------------------------------------------
-        //    OPCIONES DEL MENU Y GESTION DE LA NAVEGACION
+        //    ESTILO PARA ITEMS DEL MENÚ
         //-----------------------------------------------------
 
-        
-        //======================HORARIO====================================
-        
-        
+        Font fontItems = new Font("Segoe UI", Font.PLAIN, 14);
+        Color hoverColor = new Color(100, 0, 0);
+        Color normalColor = new Color(100, 0, 0);
+
+        java.util.function.Consumer<JMenuItem> estilizarItem = item -> {
+            item.setFont(fontItems);
+            item.setBackground(normalColor);
+            item.setForeground(Color.WHITE);
+            item.setOpaque(true);
+
+            item.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    item.setBackground(hoverColor);
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    item.setBackground(normalColor);
+                }
+            });
+        };
+
+        //------------------------------------------------------
+        //    OPCIONES DEL MENU
+        //-----------------------------------------------------
+
         JMenuItem menuItemHorario = new JMenuItem("Horario");
-        menuItemHorario.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		//Mostrar el panel horario
-        		cardLayout.show(panelPrincipal, "horarios");
-        	}
-        });
+        estilizarItem.accept(menuItemHorario);
+        menuItemHorario.addActionListener(e -> cardLayout.show(panelPrincipal, "horarios"));
         mnNewMenu.add(menuItemHorario);
-        
-        
-        //======================PERFIL====================================
 
-        
         JMenuItem menuItemPerfil = new JMenuItem("Perfil");
-        menuItemPerfil.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		cardLayout.show(panelPrincipal, "perfil");
-        	}
-        });
+        estilizarItem.accept(menuItemPerfil);
+        menuItemPerfil.addActionListener(e -> cardLayout.show(panelPrincipal, "perfil"));
         mnNewMenu.add(menuItemPerfil);
-        
-        
-        //======================ALUMNOS====================================
-        
-        
-        JMenuItem menuItemAlumnos = new JMenuItem("Alumnos");
-        menuItemAlumnos.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		cardLayout.show(panelPrincipal, "alumnos");
-        	}
-        });
-        mnNewMenu.add(menuItemAlumnos);
-        
-        
-        //======================OTROS HORARIOS====================================
 
-        
-        
+        JMenuItem menuItemAlumnos = new JMenuItem("Alumnos");
+        estilizarItem.accept(menuItemAlumnos);
+        menuItemAlumnos.addActionListener(e -> cardLayout.show(panelPrincipal, "alumnos"));
+        mnNewMenu.add(menuItemAlumnos);
+
         JMenuItem menuItemOtrosHorarios = new JMenuItem("Otros horarios");
-        menuItemOtrosHorarios.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-                cardLayout.show(panelPrincipal, "otrosHorarios");
-        	}
-        });
+        estilizarItem.accept(menuItemOtrosHorarios);
+        menuItemOtrosHorarios.addActionListener(e -> cardLayout.show(panelPrincipal, "otrosHorarios"));
         mnNewMenu.add(menuItemOtrosHorarios);
 
-        
-        //======================VER REUNIONES====================================
-        
-        
         JMenuItem menuItemVerReuniones = new JMenuItem("Ver reuniones");
-        menuItemVerReuniones.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-                cardLayout.show(panelPrincipal, "reuniones");   
-        	}
-        });
+        estilizarItem.accept(menuItemVerReuniones);
+        menuItemVerReuniones.addActionListener(e -> cardLayout.show(panelPrincipal, "reuniones"));
         mnNewMenu.add(menuItemVerReuniones);
-        
-        
-        //======================CREAR REUNION====================================
 
-        
         JMenuItem menuItemCrearReunion = new JMenuItem("Crear reunión");
-        menuItemCrearReunion.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		cardLayout.show(panelPrincipal, "crear reunion");
-        	}
-        });
+        estilizarItem.accept(menuItemCrearReunion);
+        menuItemCrearReunion.addActionListener(e -> cardLayout.show(panelPrincipal, "crear reunion"));
         mnNewMenu.add(menuItemCrearReunion);
-        
-                
-                
-                
+
         //---------------------------------------------------------
-        //    BOTON DESCONECTAR
+        //    BOTON DESCONECTAR (ELEGANTE + HOVER)
         //--------------------------------------------------------
         
         JButton btnDesconectar = new JButton("Desconectar");
+        btnDesconectar.setBounds(987, 55, 147, 25);
+        btnDesconectar.setBackground(new Color(200, 50, 50));
+        btnDesconectar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnDesconectar.setForeground(Color.WHITE);
+        btnDesconectar.setFocusPainted(false);
+        btnDesconectar.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        btnDesconectar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        // Hover elegante
+        btnDesconectar.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnDesconectar.setBackground(new Color(170, 40, 40));
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnDesconectar.setBackground(new Color(200, 50, 50));
+            }
+        });
+
         btnDesconectar.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		try {
-                    cliente.close(); //Cerramos el socket para este cliente
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    cliente.close();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
                 Login ventanaLogin = new Login();
                 ventanaLogin.setVisible(true);
                 dispose();
-        	}
+            }
         });
-        btnDesconectar.setBounds(987, 55, 147, 25);
-        contentPane.add(btnDesconectar);
-        btnDesconectar.setBackground(new Color(206, 57, 62));
-        btnDesconectar.setFont(new Font("Arial", Font.BOLD, 13));
 
-       
+        contentPane.add(btnDesconectar);
     }
 }

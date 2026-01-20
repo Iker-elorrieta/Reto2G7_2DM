@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import java.awt.Color;
 import javax.swing.JTextField;
 import java.awt.Font;
+import java.awt.Image;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -20,7 +21,9 @@ import java.net.Socket;
 import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
-
+import javax.swing.ImageIcon;
+import javax.swing.BorderFactory;
+import java.awt.Cursor;
 
 public class Login extends JFrame {
 
@@ -35,71 +38,112 @@ public class Login extends JFrame {
 
     public static void main(String[] args) {
 
-    	EventQueue.invokeLater(() -> {
-    		try {
-    			Login frame = new Login();
-    			frame.setVisible(true);
-    		} catch (Exception e) {
-    			System.out.println("No es posible conectar con el servidor");
-    		}
-    	});
-
-        
+        EventQueue.invokeLater(() -> {
+            try {
+                Login frame = new Login();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                System.out.println("No es posible conectar con el servidor");
+            }
+        });
     }
 
     public Login() {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1160, 710);
+
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        setContentPane(contentPane);
         contentPane.setLayout(null);
+        setContentPane(contentPane);
 
+        // ================= FONDO =================
+        ImageIcon fondoLogo = new ImageIcon("img/fondoLogin.jpg");
+        JLabel lblFondo = new JLabel(fondoLogo);
+        lblFondo.setBounds(0, 0, 1160, 710);
+        contentPane.add(lblFondo);
+
+        // ================= PANEL CENTRAL =================
         JPanel panel = new JPanel();
-        panel.setBackground(new Color(0, 128, 192));
-        panel.setBounds(416, 0, 311, 671);
-        contentPane.add(panel);
         panel.setLayout(null);
-        
-        //==========LOGO========
-        JPanel panelLogo = new JPanel();
-        panelLogo.setBounds(59, 59, 192, 208);
-        panel.add(panelLogo);   
-        JLabel lblLogo = new JLabel("*Logo*");
-        lblLogo.setFont(new Font("Tahoma", Font.ITALIC, 11));
-        panelLogo.add(lblLogo);
-        
-        //==========CAMPOS A RELLENAR===========
-        
-        JLabel lblUsuario = new JLabel("Usuario");
-        lblUsuario.setFont(new Font("Arial", Font.BOLD, 14));
+        panel.setBounds(380, 80, 400, 520);
+        panel.setBackground(new Color(60, 60, 60, 160)); // negro semitransparente
+        panel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        lblFondo.add(panel);
+
+        // ================= LOGO =================
+        ImageIcon iconoLogin = new ImageIcon("img/LOGO.png");
+        Image imgEscalada = iconoLogin.getImage().getScaledInstance(285, 95, Image.SCALE_SMOOTH);
+        JLabel lblLogo = new JLabel(new ImageIcon(imgEscalada));
+        lblLogo.setBounds(10, 30, 380, 140);
+        panel.add(lblLogo);
+
+        // ================= CAMPOS =================
+        JLabel lblUsuario = new JLabel("Usuario:");
+        lblUsuario.setFont(new Font("Reem Kufi", Font.BOLD, 17));
         lblUsuario.setForeground(Color.WHITE);
-        lblUsuario.setBounds(59, 314, 108, 23);
+        lblUsuario.setBounds(60, 200, 200, 25);
         panel.add(lblUsuario);
 
         txtUsuario = new JTextField();
-        txtUsuario.setFont(new Font("Arial", Font.PLAIN, 15));
-        txtUsuario.setBounds(59, 348, 192, 33);
+        txtUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        txtUsuario.setBounds(60, 230, 280, 35);
+        txtUsuario.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         panel.add(txtUsuario);
 
-        JLabel lblContraseña = new JLabel("Contraseña");
-        lblContraseña.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel lblContraseña = new JLabel("Contraseña:");
+        lblContraseña.setFont(new Font("Reem Kufi", Font.BOLD, 17));
         lblContraseña.setForeground(Color.WHITE);
-        lblContraseña.setBounds(59, 415, 108, 23);
+        lblContraseña.setBounds(60, 280, 200, 25);
         panel.add(lblContraseña);
 
         pwdField = new JPasswordField();
-        pwdField.setFont(new Font("Arial", Font.BOLD, 14));
-        pwdField.setBounds(59, 449, 192, 33);
+        pwdField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        pwdField.setBounds(60, 310, 280, 35);
+        pwdField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         panel.add(pwdField);
 
-        //========BOTON LOGIN==========
+        // ================= BOTÓN LOGIN =================
+        JButton btnLogin = new JButton("Iniciar sesión");
+        btnLogin.setFont(new Font("Yu Gothic UI", Font.BOLD, 16));
+        btnLogin.setForeground(Color.BLACK);
+        Color grisNormal = Color.LIGHT_GRAY; 
+        Color grisHover = new Color(180, 180, 180); // gris más oscuro
+        btnLogin.setBackground(Color.LIGHT_GRAY);
+        btnLogin.setBounds(110, 380, 180, 45);
+        btnLogin.setFocusPainted(false);
+        btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnLogin.setBorder(BorderFactory.createEmptyBorder());
+        
+     // ===== EFECTO HOVER (color + agrandar) ===== 
+        btnLogin.addMouseListener(new java.awt.event.MouseAdapter() { 
+        	@Override 
+        	public void mouseEntered(java.awt.event.MouseEvent evt) 
+        	{ 
+        		btnLogin.setBackground(grisHover); // Agrandar suavemente 
+        		btnLogin.setBounds( btnLogin.getX() - 5, // mover un poco a la izquierda 
+        		btnLogin.getY() - 3, // mover un poco arriba 
+        		btnLogin.getWidth() + 10, // aumentar ancho 
+        		btnLogin.getHeight() + 6 // aumentar alto 
+        		); 
+        		} 
+        	@Override 
+        	public void mouseExited(java.awt.event.MouseEvent evt) 
+        	{ btnLogin.setBackground(grisNormal); // Volver al tamaño original 
+        	btnLogin.setBounds(110, 380, 180, 45);
+        	}
+        });
+        panel.add(btnLogin);
 
-        JButton btnLogin = new JButton("Iniciar");
-        btnLogin.setForeground(new Color(0, 128, 192));
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 15));
-        btnLogin.setBackground(Color.WHITE);
+        // ================= MENSAJE DE ERROR =================
+        lblAvisoError = new JLabel("");
+        lblAvisoError.setForeground(new Color(255, 80, 80));
+        lblAvisoError.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblAvisoError.setBounds(60, 350, 280, 25);
+        panel.add(lblAvisoError);
+
+        // ================= LÓGICA DEL BOTÓN =================
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
@@ -107,29 +151,20 @@ public class Login extends JFrame {
                 String pwd = new String(pwdField.getPassword());
 
                 try {
-                	
-                	//Abrimos el socket dentro del boton de login
-                	cliente = new Socket("localhost", 4000);
-                    System.out.println("Conectado al servidor");
-                	
+                    cliente = new Socket("localhost", 4000);
                     enviaParametro = new DataOutputStream(cliente.getOutputStream());
                     recibeParametro = new DataInputStream(cliente.getInputStream());
 
-                    //Enviar usuario y contraseña
                     enviaParametro.writeUTF(usuario);
                     enviaParametro.writeUTF(pwd);
 
-                    //Recibir respuesta del servidor
                     String respuestaUsuario = recibeParametro.readUTF();
 
                     if (!respuestaUsuario.equals("Usuario o contraseña erróneos")) {
 
-                        //Convertir JSON a Map
-                    	//En esta variable estan todos los datos del usuario que ha iniciado sesion (reuniones, horarios...)
                         @SuppressWarnings("unchecked")
-						Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
-                        
-                        //Abrir menú
+                        Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
+
                         Menu frame = new Menu(usuarioMap, cliente);
                         frame.setVisible(true);
                         dispose();
@@ -145,16 +180,5 @@ public class Login extends JFrame {
                 }
             }
         });
-
-        btnLogin.setBounds(107, 546, 98, 47);
-        panel.add(btnLogin);
-
-        lblAvisoError = new JLabel("");
-        lblAvisoError.setForeground(new Color(179, 0, 4));
-        lblAvisoError.setFont(new Font("Arial", Font.BOLD, 14));
-        lblAvisoError.setBounds(39, 502, 232, 33);
-        panel.add(lblAvisoError);
-        
-        
     }
 }
