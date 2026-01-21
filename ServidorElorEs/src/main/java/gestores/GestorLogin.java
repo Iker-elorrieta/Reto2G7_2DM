@@ -16,7 +16,8 @@ public class GestorLogin {
     
     private static final String BASE_URL = "http://localhost:8080/users";
 
-    
+    		//============ CAMBIAR ESTE CODIGO ===========//
+    //==== LLAMADA A BASE DE DATOS DIRECTAMENTE NO A LA API ====//
     public List<Map<String, Object>> obtenerUsuarios() throws IOException {
         // Llamamos a la API para traer todos los usuarios
         URL url = new URL(BASE_URL);
