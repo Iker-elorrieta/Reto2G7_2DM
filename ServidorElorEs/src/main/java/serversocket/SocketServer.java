@@ -18,7 +18,6 @@ public class SocketServer extends Thread {
 				while(true) {
 					cliente = servidor.accept();
 					contador ++;
-					System.out.println("[Clientes conectados: " + contador + "]");
 					HiloServidor hilo = new HiloServidor(cliente);
 					hilo.start();
 					
