@@ -25,6 +25,7 @@ public class Login extends JFrame {
     private JPanel contentPane;
     private JTextField txtUsuario;
     private JPasswordField pwdField;
+
     private JLabel lblAvisoError;
     private Controlador ctr = new Controlador();
 
@@ -122,8 +123,8 @@ public class Login extends JFrame {
         		} 
         	@Override 
         	public void mouseExited(java.awt.event.MouseEvent evt) { 
-        		btnLogin.setBackground(grisNormal); // Volver al tamaño original 
-        		btnLogin.setBounds(110, 380, 180, 45);
+        	btnLogin.setBackground(grisNormal); // Volver al tamaño original 
+        	btnLogin.setBounds(110, 380, 180, 45);
         	}
         });
         panel.add(btnLogin);
@@ -138,10 +139,7 @@ public class Login extends JFrame {
         // ================= LÓGICA DEL BOTÓN =================
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	
-                //Mandamos todo al controlador
-            	LoginResult result = ctr.botonLogin(lblAvisoError, txtUsuario, pwdField);
-            	
+                LoginResult result = ctr.botonLogin(lblAvisoError, txtUsuario, pwdField);
                 if (result != null) {
                     Menu frame = new Menu(result.usuarioMap, result.cliente);
                     frame.setVisible(true);

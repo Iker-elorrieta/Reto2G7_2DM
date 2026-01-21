@@ -11,9 +11,12 @@ import javax.swing.JTextField;
 
 import com.google.gson.Gson;
 
+import ventanas.Login;
+
 
 public class Controlador {
 
+	//=============== LOGIN ==============
 	public LoginResult botonLogin(JLabel lblAvisoError, JTextField txtUsuario, JPasswordField pwdField) {
 
 	    String usuario = txtUsuario.getText();
@@ -35,31 +38,37 @@ public class Controlador {
 
 	            @SuppressWarnings("unchecked")
 	            Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
-	            //devuelve un nuevo usuario llamando a la clase
 	            return new LoginResult(usuarioMap, cliente);
-
+                
 	        } else {
 	            lblAvisoError.setText(respuestaUsuario);
 	            txtUsuario.setText("");
 	            pwdField.setText("");
-	            return null;
+	           
 	        }
 
 	    } catch (IOException ex) {
 	        ex.printStackTrace();
-	        return null;
 	    }
+		return null;
 	}
 
+	
+	//=============== CERAR SESION ==============
+	
 	public void cerrarSesion(Socket cliente) {
 		// TODO Auto-generated method stub
 		 try {
              cliente.close();
+             Login ventanaLogin = new Login();
+             ventanaLogin.setVisible(true);
          } catch (IOException ex) {
              ex.printStackTrace();
          }
 	}
 
+	//=============== PERFIL ==============
+	
 	public void rellenarDatosPerfil(JTextField txtNombre, JTextField txtApellidos, JTextField txtDNI, JTextField txtTelefono1, JTextField txtTelefono2, JTextField txtEmail, JTextField txtDireccion, JTextField txtUserName, Map<String, Object> usuarioMap) {
 		// TODO Auto-generated method stub
 		txtNombre.setText((String) usuarioMap.get("nombre"));
@@ -71,6 +80,10 @@ public class Controlador {
         txtDireccion.setText((String) usuarioMap.get("direccion"));
         txtUserName.setText((String) usuarioMap.get("username"));
 	}
+
+
+
+
 
 
 }

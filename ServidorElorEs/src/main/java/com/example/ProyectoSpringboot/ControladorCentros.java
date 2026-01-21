@@ -25,9 +25,11 @@ public class ControladorCentros {
 	    List<Centros> listaCentros = new ArrayList<>();
 
 	    try {
-	        InputStream is = getClass().getResourceAsStream("/centros.json");
-	        JsonObject root = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonObject();
-	        JsonArray array = root.getAsJsonArray("CENTROS");
+	    	InputStream is = getClass().getResourceAsStream("/centros.json");
+	    	JsonArray array = JsonParser.parseReader(new InputStreamReader(is))
+	    	                            .getAsJsonObject()
+	    	                            .getAsJsonArray("CENTROS");
+
 
 	        for (JsonElement elemento : array) {
 

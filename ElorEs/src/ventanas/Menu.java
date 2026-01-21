@@ -215,8 +215,6 @@ public class Menu extends JFrame {
             public void actionPerformed(ActionEvent e) {
             	//Lo enviamos al controlador
             	ctr.cerrarSesion(cliente);
-                Login ventanaLogin = new Login();
-                ventanaLogin.setVisible(true);
                 dispose();
             }
         });
