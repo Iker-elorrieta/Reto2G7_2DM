@@ -9,11 +9,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import controlador.Controlador;
+
+
 public class PanelPerfil extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JTextField txtNombre, txtUserName, txtDNI, txtTelefono1, txtApellidos, txtEmail, txtTelefono2, txtDireccion;
-
+    private Controlador ctr = new Controlador();
+    
     public PanelPerfil(Map<String, Object> usuarioMap) {
 
         setLayout(null);
@@ -152,13 +156,16 @@ public class PanelPerfil extends JPanel {
         // ============================
         // RELLENAR DATOS
         // ============================
-        txtNombre.setText((String) usuarioMap.get("nombre"));
-        txtApellidos.setText((String) usuarioMap.get("apellidos"));
-        txtDNI.setText((String) usuarioMap.get("dni"));
-        txtTelefono1.setText(String.valueOf(usuarioMap.get("telefono1")));
-        txtTelefono2.setText(String.valueOf(usuarioMap.get("telefono2")));
-        txtEmail.setText((String) usuarioMap.get("email"));
-        txtDireccion.setText((String) usuarioMap.get("direccion"));
-        txtUserName.setText((String) usuarioMap.get("username"));
+        ctr.rellenarDatosPerfil(txtNombre, 
+        		txtApellidos, 
+        		txtDNI, 
+        		txtTelefono1, 
+        		txtTelefono2, 
+        		txtEmail, 
+        		txtDireccion, 
+        		txtUserName, 
+        		usuarioMap 
+        );
+       
     }
 }

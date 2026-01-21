@@ -3,22 +3,20 @@ package ventanas;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
-
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+
+import controlador.Controlador;
+
 import java.awt.event.ActionListener;
 import java.awt.SystemColor;
 
@@ -27,7 +25,7 @@ public class Menu extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JPanel panelPrincipal;
-    
+    private Controlador ctr = new Controlador();
     private CardLayout cardLayout;
 
     public Menu(Map<String, Object> usuarioMap, Socket cliente) {
@@ -215,11 +213,8 @@ public class Menu extends JFrame {
 
         btnDesconectar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    cliente.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+            	//Lo enviamos al controlador
+            	ctr.cerrarSesion(cliente);
                 Login ventanaLogin = new Login();
                 ventanaLogin.setVisible(true);
                 dispose();

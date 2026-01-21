@@ -4,9 +4,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import com.google.gson.Gson;
-
+import controlador.Controlador;
+import controlador.LoginResult;
 import java.awt.Color;
 import javax.swing.JTextField;
 import java.awt.Font;
@@ -14,11 +13,6 @@ import java.awt.Image;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import javax.swing.ImageIcon;
@@ -30,11 +24,9 @@ public class Login extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTextField txtUsuario;
-    private Socket cliente;
     private JPasswordField pwdField;
-    private DataOutputStream enviaParametro;
-    private DataInputStream recibeParametro;
     private JLabel lblAvisoError;
+    private Controlador ctr = new Controlador();
 
     public static void main(String[] args) {
 
@@ -129,9 +121,9 @@ public class Login extends JFrame {
         		); 
         		} 
         	@Override 
-        	public void mouseExited(java.awt.event.MouseEvent evt) 
-        	{ btnLogin.setBackground(grisNormal); // Volver al tamaño original 
-        	btnLogin.setBounds(110, 380, 180, 45);
+        	public void mouseExited(java.awt.event.MouseEvent evt) { 
+        		btnLogin.setBackground(grisNormal); // Volver al tamaño original 
+        		btnLogin.setBounds(110, 380, 180, 45);
         	}
         });
         panel.add(btnLogin);
@@ -146,39 +138,17 @@ public class Login extends JFrame {
         // ================= LÓGICA DEL BOTÓN =================
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
-                String usuario = txtUsuario.getText();
-                String pwd = new String(pwdField.getPassword());
-
-                try {
-                    cliente = new Socket("localhost", 4000);
-                    enviaParametro = new DataOutputStream(cliente.getOutputStream());
-                    recibeParametro = new DataInputStream(cliente.getInputStream());
-
-                    enviaParametro.writeUTF(usuario);
-                    enviaParametro.writeUTF(pwd);
-
-                    String respuestaUsuario = recibeParametro.readUTF();
-
-                    if (!respuestaUsuario.equals("Usuario o contraseña erróneos")) {
-
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
-
-                        Menu frame = new Menu(usuarioMap, cliente);
-                        frame.setVisible(true);
-                        dispose();
-
-                    } else {
-                        lblAvisoError.setText(respuestaUsuario);
-                        txtUsuario.setText("");
-                        pwdField.setText("");
-                    }
-
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+            	
+                //Mandamos todo al controlador
+            	LoginResult result = ctr.botonLogin(lblAvisoError, txtUsuario, pwdField);
+            	
+                if (result != null) {
+                    Menu frame = new Menu(result.usuarioMap, result.cliente);
+                    frame.setVisible(true);
+                    dispose();
                 }
             }
         });
+
     }
 }
