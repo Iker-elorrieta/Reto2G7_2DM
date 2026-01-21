@@ -6,51 +6,48 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
-import com.example.ProyectoSpringboot.modelo.Tipos;
-import com.example.ProyectoSpringboot.modelo.Users;
-
 import gestores.GestorLogin;
 
 public class Controlador {
 
     private GestorLogin gestLogin = new GestorLogin();
 
-    public Users verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException {
+    public Map<String, Object> verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException {
 
-        List<Users> usuarios = gestLogin.obtenerUsuarios();
-        if (usuarios == null) return null;
+        //El gestor devuelve List<Map<String,Object>>
+        List<Map<String, Object>> usuarios = gestLogin.obtenerUsuarios();
+        if (usuarios == null) {
+        	return null;
+        }
 
         //Buscamos al usuario que coincida con el usuario introducido
-        for (Users u : usuarios) {
+        for (Map<String, Object> u : usuarios) {
 
-            String usernameBD = (String) u.getUsername();
-            String passwordBD = (String) u.getPassword();
+            String usernameBD = (String) u.get("username");
+            String passwordBD = (String) u.get("password");
+            String tipo = (String) u.get("tipo");
 
+            //Comprobamos que sea correcto
             if (usernameBD.equals(usuario)) {
 
-                //Compruebo el tipo de usuario
-                @SuppressWarnings("unchecked")
-                Tipos tipos = u.getTipos();
-                String tipo = tipos.getName();
-
-                //Compruebo que sea profesor
+                //Solo permite profesores
                 if (!tipo.equalsIgnoreCase("profesor")) {
                     return null;
                 }
 
-                //Hasheo la contraseña de la BD
+                // Hasheo la contraseña de la BD
                 String pwdHashBD = hash(passwordBD);
 
-                //Comparo las contraseñas
+                // Comparo las contraseñas
                 if (pwdHashBD.equals(hashIntroducido)) {
-                    return u; // Usuario valido
+                    return u; //Usuario valido 
                 } else {
                     return null;
                 }
             }
         }
 
-        return null; // Usuario no encontrado
+        return null; //Usuario no encontrado
     }
 
 

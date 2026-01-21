@@ -3,14 +3,10 @@ package serversocket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-
-import com.example.ProyectoSpringboot.modelo.Users;
-
 import controlador.Controlador;
 
 public class HiloServidor extends Thread{
@@ -18,7 +14,6 @@ public class HiloServidor extends Thread{
     private DataInputStream recibeParametro;
     private DataOutputStream enviaParametro;
     private Controlador ctr = new Controlador();
-    private Users user; 
     
     public HiloServidor(Socket cliente) {
         this.cliente = cliente;
@@ -38,12 +33,12 @@ public class HiloServidor extends Thread{
                 String hash = hash(pwd);
 
                 // Llamamos al controlador (que ahora devuelve Map<String,Object>)
-                user = ctr.verificarDatosLogIn(usuario, hash);
+                 Map<String, Object> usuarioMap = ctr.verificarDatosLogIn(usuario, hash);
                 
-                if(user != null) {
+                if(usuarioMap != null) {
                 	acceso = true;
                     //Convertimos el usuario en un json y enviamos el json
-                    String json = new com.google.gson.Gson().toJson(user);
+                    String json = new com.google.gson.Gson().toJson(usuarioMap);
                     enviaParametro.writeUTF(json);
                 } else {
                     enviaParametro.writeUTF("Usuario o contraseña erróneos");

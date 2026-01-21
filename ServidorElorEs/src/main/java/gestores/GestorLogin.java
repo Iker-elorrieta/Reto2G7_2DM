@@ -1,11 +1,7 @@
 package gestores;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,13 +18,27 @@ public class GestorLogin {
 
     		//============ CAMBIAR ESTE CODIGO ===========//
     //==== LLAMADA A BASE DE DATOS DIRECTAMENTE NO A LA API ====//
-    public List<Users> obtenerUsuarios() {
+	public List<Map<String, Object>> obtenerUsuarios() {
 	    Session session = session();
 	    List<Users> listaUsuarios = session.createQuery("FROM Users", Users.class).list();
-	    //session.close();
 
-	    return listaUsuarios;
+	    List<Map<String, Object>> listaMap = new ArrayList<>();
+
+	    for (Users u : listaUsuarios) {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("id", u.getId());
+	        map.put("username", u.getUsername());
+	        map.put("password", u.getPassword());
+	        map.put("tipo", u.getTipos().getName());
+	        map.put("email", u.getEmail());
+	        map.put("nombre", u.getNombre());
+	        map.put("apellidos", u.getApellidos());
+	        listaMap.add(map);
+	    }
+
+	    return listaMap;
 	}
+
     
     private Session session() {
 		// TODO Auto-generated method stub
