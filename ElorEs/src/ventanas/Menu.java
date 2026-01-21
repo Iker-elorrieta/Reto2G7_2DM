@@ -25,10 +25,9 @@ public class Menu extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JPanel panelPrincipal;
-    private Controlador ctr = new Controlador();
     private CardLayout cardLayout;
 
-    public Menu(Map<String, Object> usuarioMap, Socket cliente) {
+    public Menu(Map<String, Object> usuarioMap, Socket cliente, Controlador ctr) {
     	
     	// Arreglar color azul del menú 
     	UIManager.put("Menu.selectionBackground", new Color(0, 128, 192)); 
@@ -90,7 +89,7 @@ public class Menu extends JFrame {
         //---------------------------------------------------------
         //    PANEL ALUMNOS
         //----------------------------------------------------------
-        PanelAlumnos panelAlumnos = new PanelAlumnos(usuarioMap);
+        PanelAlumnos panelAlumnos = new PanelAlumnos(usuarioMap, ctr);
         
         //--------------------------------------------------------
         //    AÑADIR LOS PANELES AL CARDLAYOUT

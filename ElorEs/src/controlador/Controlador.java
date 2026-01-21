@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import com.google.gson.Gson;
 
@@ -82,8 +83,12 @@ public class Controlador {
 	}
 
 
-
-
+	//=============== CARGAR ALUMNOS ==============
+	
+	public void cargarAlumnos(DefaultTableModel modeloTablaAlumnos, Map<String, Object> usuarioMap) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

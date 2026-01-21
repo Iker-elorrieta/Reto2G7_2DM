@@ -141,7 +141,7 @@ public class Login extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 LoginResult result = ctr.botonLogin(lblAvisoError, txtUsuario, pwdField);
                 if (result != null) {
-                    Menu frame = new Menu(result.usuarioMap, result.cliente);
+                    Menu frame = new Menu(result.usuarioMap, result.cliente, ctr);
                     frame.setVisible(true);
                     dispose();
                 }
