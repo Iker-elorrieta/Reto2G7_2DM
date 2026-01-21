@@ -6,29 +6,32 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
+import com.example.ProyectoSpringboot.modelo.Tipos;
+import com.example.ProyectoSpringboot.modelo.Users;
+
 import gestores.GestorLogin;
 
 public class Controlador {
 
     private GestorLogin gestLogin = new GestorLogin();
 
-    public Map<String, Object> verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException {
+    public Users verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException {
 
-        List<Map<String, Object>> usuarios = gestLogin.obtenerUsuarios();
+        List<Users> usuarios = gestLogin.obtenerUsuarios();
         if (usuarios == null) return null;
 
         //Buscamos al usuario que coincida con el usuario introducido
-        for (Map<String, Object> u : usuarios) {
+        for (Users u : usuarios) {
 
-            String usernameBD = (String) u.get("username");
-            String passwordBD = (String) u.get("password");
+            String usernameBD = (String) u.getUsername();
+            String passwordBD = (String) u.getPassword();
 
             if (usernameBD.equals(usuario)) {
 
                 //Compruebo el tipo de usuario
                 @SuppressWarnings("unchecked")
-                Map<String, Object> tipos = (Map<String, Object>) u.get("tipos");
-                String tipo = (String) tipos.get("name");
+                Tipos tipos = u.getTipos();
+                String tipo = tipos.getName();
 
                 //Compruebo que sea profesor
                 if (!tipo.equalsIgnoreCase("profesor")) {

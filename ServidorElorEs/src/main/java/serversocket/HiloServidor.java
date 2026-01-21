@@ -3,10 +3,13 @@ package serversocket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+
+import com.example.ProyectoSpringboot.modelo.Users;
 
 import controlador.Controlador;
 
@@ -15,7 +18,7 @@ public class HiloServidor extends Thread{
     private DataInputStream recibeParametro;
     private DataOutputStream enviaParametro;
     private Controlador ctr = new Controlador();
-    private Map<String, Object> user; 
+    private Users user; 
     
     public HiloServidor(Socket cliente) {
         this.cliente = cliente;
