@@ -6,16 +6,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
-import gestores.GestorLogin;
+import gestores.Gestor;
 
 public class Controlador {
 
-    private GestorLogin gestLogin = new GestorLogin();
+    private Gestor gestor = new Gestor();
 
     public Map<String, Object> verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException {
 
         //El gestor devuelve List<Map<String,Object>>
-        List<Map<String, Object>> usuarios = gestLogin.obtenerUsuarios();
+        List<Map<String, Object>> usuarios = gestor.obtenerUsuarios();
         if (usuarios == null) {
         	return null;
         }
@@ -50,6 +50,7 @@ public class Controlador {
         return null; //Usuario no encontrado
     }
 
+    
 
     private String hash(String pwd) {
         String pwdHasheada = new String();
@@ -66,4 +67,19 @@ public class Controlador {
         }
         return pwdHasheada;
     }
+
+
+
+	public Map<String, Object> obtenerAlumnosProfesor(int profeId) {
+		// TODO Auto-generated method stub
+		List<Map<String, Object>> alumnos = gestor.obtenerAlumnosProfesor(profeId);
+		if(alumnos == null) {
+			return null;
+		} else {
+			
+			return Map.of(
+					"status", "OK", 
+					"alumnos", alumnos);
+		}
+	}
 }

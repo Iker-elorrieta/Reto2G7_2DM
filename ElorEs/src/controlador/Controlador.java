@@ -5,19 +5,19 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import ventanas.Login;
 
 
 public class Controlador {
+	private Socket cliente;
 
 	//=============== LOGIN ==============
 	public LoginResult botonLogin(JLabel lblAvisoError, JTextField txtUsuario, JPasswordField pwdField) {
@@ -26,7 +26,7 @@ public class Controlador {
 	    String pwd = new String(pwdField.getPassword());
 
 	    try {
-	        Socket cliente = new Socket("localhost", 4000);
+	        cliente = new Socket("localhost", 4000);
 	        DataOutputStream enviaParametro = new DataOutputStream(cliente.getOutputStream());
 	        DataInputStream recibeParametro = new DataInputStream(cliente.getInputStream());
 
@@ -87,10 +87,63 @@ public class Controlador {
 
 	//=============== CARGAR ALUMNOS ==============
 	
-	public void cargarAlumnos(DefaultTableModel modeloTablaAlumnos, Map<String, Object> usuarioMap) {
-		// TODO Auto-generated method stub
-		
+	public void cargarAlumnos(int profesorId, DefaultTableModel modeloTablaAlumnos) {
+	    try {
+	        //Creamos un json de una peticion
+	        Map<String, Object> peticion = Map.of(
+	            "accion", "ALUMNOS_DE_PROFESOR",
+	            "profeId", profesorId
+	        );
+
+	        String jsonPeticion = new Gson().toJson(peticion);
+
+	        //Enviamos al servidor la peticion
+	        DataOutputStream dos = new DataOutputStream(cliente.getOutputStream());
+	        dos.writeUTF(jsonPeticion);
+	        //dos.flush();
+
+	        //recibimos la respuesta
+	        DataInputStream dis = new DataInputStream(cliente.getInputStream());
+	        String jsonRespuesta = dis.readUTF();
+
+	        //Parseamos la respuesta
+	        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+	        Map<String, Object> respuesta = new Gson().fromJson(jsonRespuesta, type);
+
+	        if (!"OK".equals(respuesta.get("status"))) {
+	            System.out.println("Error: " + respuesta.get("mensaje"));
+	            return;
+	        }
+
+	        //Obtenemos la lista de Alumnos
+	        Type type2 = new TypeToken<Map<String, Object>>() {}.getType();
+	        Map<String, Object> respuesta2 = new Gson().fromJson(jsonRespuesta, type2);
+
+	        Type listaType = new TypeToken<List<Map<String, Object>>>() {}.getType();
+	        List<Map<String, Object>> alumnos = new Gson().fromJson(
+	                new Gson().toJson(respuesta2.get("alumnos")),
+	                listaType
+	        );
+
+
+	        // 6. Rellenar tabla
+	        modeloTablaAlumnos.setRowCount(0);
+
+	        for (Map<String, Object> alum : alumnos) {
+	            modeloTablaAlumnos.addRow(new Object[]{
+	                alum.get("id"),
+	                alum.get("nombre"),
+	                alum.get("apellidos"),
+	                alum.get("curso"),
+	                alum.get("ciclo")
+	            });
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
+
 
 
 }

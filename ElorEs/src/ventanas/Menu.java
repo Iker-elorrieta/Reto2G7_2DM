@@ -80,7 +80,6 @@ public class Menu extends JFrame {
         //    PANEL PERFIL
         //----------------------------------------------------------
         PanelPerfil panelPerfil = new PanelPerfil(usuarioMap);
-        System.out.println(usuarioMap);
         
         //---------------------------------------------------------
         //    PANEL CREAR REUNION
@@ -90,7 +89,8 @@ public class Menu extends JFrame {
         //---------------------------------------------------------
         //    PANEL ALUMNOS
         //----------------------------------------------------------
-        PanelAlumnos panelAlumnos = new PanelAlumnos(usuarioMap, ctr);
+        int profesorId = ((Double) usuarioMap.get("id")).intValue();
+        PanelAlumnos panelAlumnos = new PanelAlumnos(profesorId, ctr);
         
         //--------------------------------------------------------
         //    AÑADIR LOS PANELES AL CARDLAYOUT
@@ -105,7 +105,7 @@ public class Menu extends JFrame {
         
 
         //---------------------------------------------------------
-        //    BARRA DE MENU (ESTILO ELEGANTE)
+        //    BARRA DE MENU
         //----------------------------------------------------------
         
         JMenuBar menuBar = new JMenuBar(); 
@@ -155,34 +155,65 @@ public class Menu extends JFrame {
         //    OPCIONES DEL MENU
         //-----------------------------------------------------
 
+        //======= ITEM HORARIO ========
         JMenuItem menuItemHorario = new JMenuItem("Horario");
+        menuItemHorario.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		 cardLayout.show(panelPrincipal, "horarios");
+        	}
+        });
         estilizarItem.accept(menuItemHorario);
-        menuItemHorario.addActionListener(e -> cardLayout.show(panelPrincipal, "horarios"));
         mnNewMenu.add(menuItemHorario);
 
+        //======= ITEM PERFIL ========
         JMenuItem menuItemPerfil = new JMenuItem("Perfil");
+        menuItemPerfil.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		cardLayout.show(panelPrincipal, "perfil");
+        	}
+        });
         estilizarItem.accept(menuItemPerfil);
-        menuItemPerfil.addActionListener(e -> cardLayout.show(panelPrincipal, "perfil"));
         mnNewMenu.add(menuItemPerfil);
 
+        //======= ITEM ALUMNOS ========
         JMenuItem menuItemAlumnos = new JMenuItem("Alumnos");
+        menuItemAlumnos.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		cardLayout.show(panelPrincipal, "alumnos");
+        	}
+        });
         estilizarItem.accept(menuItemAlumnos);
-        menuItemAlumnos.addActionListener(e -> cardLayout.show(panelPrincipal, "alumnos"));
         mnNewMenu.add(menuItemAlumnos);
 
+        
+        //======= ITEM OTROS HORARIOS ========
         JMenuItem menuItemOtrosHorarios = new JMenuItem("Otros horarios");
+        menuItemOtrosHorarios.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		 cardLayout.show(panelPrincipal, "otrosHorarios");
+        	}
+        });
         estilizarItem.accept(menuItemOtrosHorarios);
-        menuItemOtrosHorarios.addActionListener(e -> cardLayout.show(panelPrincipal, "otrosHorarios"));
         mnNewMenu.add(menuItemOtrosHorarios);
 
+        //======= ITEM REUNIONES ========
         JMenuItem menuItemVerReuniones = new JMenuItem("Ver reuniones");
+        menuItemVerReuniones.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		cardLayout.show(panelPrincipal, "reuniones");
+        	}
+        });
         estilizarItem.accept(menuItemVerReuniones);
-        menuItemVerReuniones.addActionListener(e -> cardLayout.show(panelPrincipal, "reuniones"));
         mnNewMenu.add(menuItemVerReuniones);
 
+        //======= ITEM REUNIONES ========
         JMenuItem menuItemCrearReunion = new JMenuItem("Crear reunión");
+        menuItemCrearReunion.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		cardLayout.show(panelPrincipal, "crear reunion");
+        	}
+        });
         estilizarItem.accept(menuItemCrearReunion);
-        menuItemCrearReunion.addActionListener(e -> cardLayout.show(panelPrincipal, "crear reunion"));
         mnNewMenu.add(menuItemCrearReunion);
 
         //---------------------------------------------------------

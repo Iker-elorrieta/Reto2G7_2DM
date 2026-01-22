@@ -13,14 +13,15 @@ import com.example.ProyectoSpringboot.modelo.Users;
 
 import controlador.HibernateUtil;
 
-public class GestorLogin {
+public class Gestor {
     
 
-    		//============ CAMBIAR ESTE CODIGO ===========//
-    //==== LLAMADA A BASE DE DATOS DIRECTAMENTE NO A LA API ====//
+    //============ GESTOR LOGIN ===========//
+   
 	public List<Map<String, Object>> obtenerUsuarios() {
 	    Session session = session();
-	    List<Users> listaUsuarios = session.createQuery("FROM Users", Users.class).list();
+	    String todosUsuarios = Querys.TODOS_USERS;
+	    List<Users> listaUsuarios = session.createQuery(todosUsuarios, Users.class).list();
 
 	    List<Map<String, Object>> listaMap = new ArrayList<>();
 
@@ -42,8 +43,31 @@ public class GestorLogin {
 
 	    return listaMap;
 	}
+	
+	//============ OBTENER ALUMNOS POR PROFESOR ===========//
 
-    
+	public List<Map<String, Object>> obtenerAlumnosProfesor(int profeId) {
+		// TODO Auto-generated method stub
+		Session session = session();
+		String alumnosProfesor = Querys.ALUMNOS_DE_PROFESOR;
+		
+		List<Object[]> listaAlumnos = session.createQuery(alumnosProfesor, Object[].class).setParameter("profeId", profeId).getResultList();
+		
+		List<Map<String, Object>> listaMap = new ArrayList<>();
+
+		for (Object[] fila: listaAlumnos) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", fila[0]);
+			map.put("nombre", fila[1]);
+			map.put("apellidos", fila[2]);
+			map.put("email", fila[3]);
+			map.put("curso", fila[4]);
+			map.put("ciclo", fila[5]);
+			listaMap.add(map);
+		}
+		return listaMap;
+	}
+	
     private Session session() {
 		// TODO Auto-generated method stub
 		SessionFactory sesion = HibernateUtil.getSessionFactory();

@@ -3,10 +3,16 @@ package serversocket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import controlador.Controlador;
 
 public class HiloServidor extends Thread{
@@ -25,26 +31,52 @@ public class HiloServidor extends Thread{
             enviaParametro = new DataOutputStream(cliente.getOutputStream());
             boolean acceso = false;
             
+            
+            //========= LOGIN =========
             do {
-            	
-                //Recibe los datos que introduce el cliente en el login y la contraseña la hashea
-            	String usuario = recibeParametro.readUTF();
+                String usuario = recibeParametro.readUTF();
                 String pwd = recibeParametro.readUTF();
                 String hash = hash(pwd);
 
-                // Llamamos al controlador (que ahora devuelve Map<String,Object>)
-                 Map<String, Object> usuarioMap = ctr.verificarDatosLogIn(usuario, hash);
-                
-                if(usuarioMap != null) {
-                	acceso = true;
-                    //Convertimos el usuario en un json y enviamos el json
-                    String json = new com.google.gson.Gson().toJson(usuarioMap);
-                    enviaParametro.writeUTF(json);
+                Map<String, Object> usuarioMap = ctr.verificarDatosLogIn(usuario, hash);
+
+                if (usuarioMap != null) {
+                    acceso = true;
+                    enviaParametro.writeUTF(new Gson().toJson(usuarioMap));
                 } else {
                     enviaParametro.writeUTF("Usuario o contraseña erróneos");
                 }
-                
-            } while (acceso != true);
+
+            } while (!acceso);
+
+            while (true) {
+                try {
+                    String mensaje = recibeParametro.readUTF();
+
+                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
+                    Map<String, Object> peticion = new Gson().fromJson(mensaje, type);
+
+                    String accion = (String) peticion.get("accion");
+
+                    switch (accion) {
+
+                        case "ALUMNOS_DE_PROFESOR":
+                            int profeId = ((Double) peticion.get("profeId")).intValue();
+                            Map<String, Object> respuesta = ctr.obtenerAlumnosProfesor(profeId);
+                            enviaParametro.writeUTF(new Gson().toJson(respuesta));
+                            break;
+
+                        default:
+                            System.out.println("Acción no reconocida: " + accion);
+                            break;
+                    }
+
+                } catch (IOException e) {
+                    System.out.println("Cliente desconectado");
+                    break;
+                }
+            }
+
             
             
         } catch (IOException e) {
@@ -52,6 +84,8 @@ public class HiloServidor extends Thread{
             e.printStackTrace();
         }
     }
+    
+    
     
     private String hash(String pwd) {
         String resumenString = new String();
