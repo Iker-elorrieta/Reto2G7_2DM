@@ -12,12 +12,10 @@ public class SocketServer extends Thread {
 			
 			try (ServerSocket servidor = new ServerSocket(4000)) {
 				System.out.println("Servidor iniciado");
-				int contador = 0;
 				Socket cliente;
 				System.out.print("");
 				while(true) {
 					cliente = servidor.accept();
-					contador ++;
 					HiloServidor hilo = new HiloServidor(cliente);
 					hilo.start();
 					

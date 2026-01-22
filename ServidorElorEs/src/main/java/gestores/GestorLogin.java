@@ -33,6 +33,10 @@ public class GestorLogin {
 	        map.put("email", u.getEmail());
 	        map.put("nombre", u.getNombre());
 	        map.put("apellidos", u.getApellidos());
+	        map.put("telefono1", u.getTelefono1());
+	        map.put("telefono2", u.getTelefono2());
+	        map.put("direccion", u.getDireccion());
+	        map.put("dni", u.getDni());
 	        listaMap.add(map);
 	    }
 

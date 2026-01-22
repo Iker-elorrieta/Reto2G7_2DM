@@ -80,6 +80,7 @@ public class Menu extends JFrame {
         //    PANEL PERFIL
         //----------------------------------------------------------
         PanelPerfil panelPerfil = new PanelPerfil(usuarioMap);
+        System.out.println(usuarioMap);
         
         //---------------------------------------------------------
         //    PANEL CREAR REUNION
