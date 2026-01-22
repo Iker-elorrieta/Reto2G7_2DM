@@ -3,6 +3,7 @@ package controlador;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.Socket;
 import java.util.Map;
 import javax.swing.JLabel;
@@ -11,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import ventanas.Login;
 
@@ -36,9 +38,9 @@ public class Controlador {
 	        String respuestaUsuario = recibeParametro.readUTF();
 
 	        if (!respuestaUsuario.equals("Usuario o contraseña erróneos")) {
-
-	            @SuppressWarnings("unchecked")
-	            Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, Map.class);
+	        	
+	        	Type type = new TypeToken<Map<String, Object>>() {}.getType();
+	        	Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, type);
 	            return new LoginResult(usuarioMap, cliente);
                 
 	        } else {
