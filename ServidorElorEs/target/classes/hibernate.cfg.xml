@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- Conexión a MySQL -->
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/eduelorrieta</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password"></property>
+
+        <!-- Dialecto y configuración general -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">none</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- Mapeos XML -->
+        <mapping resource="primero/Reuniones.hbm.xml"/>
+        <mapping resource="primero/Horarios.hbm.xml"/>
+        <mapping resource="primero/Tipos.hbm.xml"/>
+        <mapping resource="primero/Ciclos.hbm.xml"/>
+        <mapping resource="primero/Matriculaciones.hbm.xml"/>
+        <mapping resource="primero/Users.hbm.xml"/>
+        <mapping resource="primero/Modulos.hbm.xml"/>
+
+    </session-factory>
+</hibernate-configuration>

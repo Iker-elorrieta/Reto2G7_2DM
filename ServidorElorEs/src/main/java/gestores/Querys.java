@@ -1,0 +1,19 @@
+package gestores;
+
+public class Querys {
+	
+	public static final String TODOS_USERS = "FROM Users";
+	public static final String ALUMNOS_DE_PROFESOR =
+		    "SELECT DISTINCT u.id, u.nombre, u.apellidos, u.email, m.curso, c.nombre " +
+		    "FROM Horarios h " +
+		    "JOIN h.modulos mo " +
+		    "JOIN mo.ciclos c " +
+		    "JOIN Matriculaciones m ON m.ciclos = c " +
+		    "JOIN m.users u " +
+		    "WHERE h.users.id = :profeId " +
+		    "ORDER BY u.apellidos, u.nombre";
+
+
+
+
+}
