@@ -43,7 +43,7 @@ public class Menu extends JFrame {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(null);
 
-        // Fondo general elegante
+        // Fondo general
         contentPane.setBackground(new Color(40, 40, 40));
         setContentPane(contentPane);
 
@@ -87,22 +87,35 @@ public class Menu extends JFrame {
         PanelCrearReunion panelCrearReunion = new PanelCrearReunion(usuarioMap);
         
         //---------------------------------------------------------
-        //    PANEL ALUMNOS
+        //      PANEL ALUMNOS
         //----------------------------------------------------------
         int profesorId = ((Double) usuarioMap.get("id")).intValue();
         PanelAlumnos panelAlumnos = new PanelAlumnos(profesorId, ctr);
-        
+
         //--------------------------------------------------------
-        //    AÑADIR LOS PANELES AL CARDLAYOUT
+        //      AÑADIR LOS PANELES AL CARDLAYOUT
         //-------------------------------------------------------
-        
+
         panelPrincipal.add(panelHorarios, "horarios");
         panelPrincipal.add(panelOtrosHorarios, "otrosHorarios");
         panelPrincipal.add(panelReuniones, "reuniones");
         panelPrincipal.add(panelPerfil, "perfil");
         panelPrincipal.add(panelCrearReunion, "crear reunion");
         panelPrincipal.add(panelAlumnos, "alumnos");
-        
+
+        //---------------------------------------------------------
+        //      PANEL MENU 
+        //----------------------------------------------------------
+        JPanel panelMenu = new JPanel();
+        panelMenu.setBackground(new Color(50, 50, 50));
+        panelMenu.setLayout(null);
+        panelPrincipal.add(panelMenu, "menu");
+
+        //---------------------------------------------------------
+        //      MOSTRAR PANEL MENU POR DEFECTO
+        //----------------------------------------------------------
+        cardLayout.show(panelPrincipal, "menu");
+
 
         //---------------------------------------------------------
         //    BARRA DE MENU

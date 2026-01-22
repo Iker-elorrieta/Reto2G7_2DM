@@ -10,6 +10,10 @@ import javax.swing.table.DefaultTableModel;
 import controlador.Controlador;
 
 import javax.swing.JScrollPane;
+import javax.swing.JButton;
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class PanelAlumnos extends JPanel {
 
@@ -38,6 +42,19 @@ public class PanelAlumnos extends JPanel {
             0
         );
         table.setModel(modeloTablaAlumnos);
+        
+        JButton btnVolver = new JButton("Volver");
+        btnVolver.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		
+        	}
+        });
+        btnVolver.setForeground(new Color(255, 255, 255));
+        btnVolver.setFont(new Font("Arial", Font.BOLD, 13));
+        btnVolver.setBackground(new Color(0, 128, 192));
+        btnVolver.setBounds(117, 506, 89, 30);
+        add(btnVolver);
 
         ctr.cargarAlumnos(profesorId, modeloTablaAlumnos);
     }
