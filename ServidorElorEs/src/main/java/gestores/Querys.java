@@ -12,6 +12,14 @@ public class Querys {
 		    "JOIN m.users u " +
 		    "WHERE h.users.id = :profeId " +
 		    "ORDER BY u.apellidos, u.nombre";
+	
+	public static final String HORARIO_PROFESOR =
+		    "SELECT h.hora, h.dia, mo.nombre " +
+		    "FROM Horarios h " +
+		    "JOIN h.modulos mo " +
+		    "WHERE h.users.id = :profeId";
+
+
 
 
 

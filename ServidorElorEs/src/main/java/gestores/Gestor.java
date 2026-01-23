@@ -68,11 +68,39 @@ public class Gestor {
 		return listaMap;
 	}
 	
-    private Session session() {
-		// TODO Auto-generated method stub
-		SessionFactory sesion = HibernateUtil.getSessionFactory();
-		Session session = sesion.openSession();
-		return session;
+   
+
+	public List<Map<String, Object>> obtenerHorarioProfesor(int profesorId) {
+
+	    Session session = session();
+	    String horarioProfesor = Querys.HORARIO_PROFESOR;
+
+	    List<Object[]> listaHorario = session
+	        .createQuery(horarioProfesor, Object[].class)
+	        .setParameter("profeId", profesorId)
+	        .getResultList();
+
+	    List<Map<String, Object>> listaMap = new ArrayList<>();
+
+	    for (Object[] fila : listaHorario) {
+	        Map<String, Object> map = new HashMap<>();
+	        map.put("hora", fila[0]);
+	        map.put("dia", fila[1]);
+	        map.put("asignatura", fila[2]);
+	        listaMap.add(map);
+	    }
+
+	    return listaMap;
 	}
+
+	
+	
+	
+	 private Session session() {
+			// TODO Auto-generated method stub
+			SessionFactory sesion = HibernateUtil.getSessionFactory();
+			Session session = sesion.openSession();
+			return session;
+		}
  
 }

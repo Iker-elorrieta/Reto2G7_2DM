@@ -3,6 +3,7 @@ package controlador;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,4 +83,23 @@ public class Controlador {
 					"alumnos", alumnos);
 		}
 	}
+
+
+
+	public Map<String, Object> obtenerHorarioProfesor(int profesorId) {
+
+	    List<Map<String, Object>> horario = gestor.obtenerHorarioProfesor(profesorId);
+	    Map<String, Object> respuesta = new HashMap<>();
+
+	    if (horario == null) {
+	        respuesta.put("status", "ERROR");
+	        respuesta.put("mensaje", "No se pudo obtener el horario");
+	    } else {
+	        respuesta.put("status", "OK");
+	        respuesta.put("horario", horario);
+	    }
+
+	    return respuesta;
+	}
+
 }

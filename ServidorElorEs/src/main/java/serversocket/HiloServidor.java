@@ -62,13 +62,18 @@ public class HiloServidor extends Thread{
 
                         case "ALUMNOS_DE_PROFESOR":
                             int profeId = ((Double) peticion.get("profeId")).intValue();
-                            Map<String, Object> respuesta = ctr.obtenerAlumnosProfesor(profeId);
-                            enviaParametro.writeUTF(new Gson().toJson(respuesta));
+                            Map<String, Object> respuestaAlumnos = ctr.obtenerAlumnosProfesor(profeId);
+                            enviaParametro.writeUTF(new Gson().toJson(respuestaAlumnos));
+                            break;
+
+                        case "HORARIO_PROFESOR":
+                            int profesorId = ((Double) peticion.get("profeId")).intValue();
+                            Map<String, Object> respuestaHorario = ctr.obtenerHorarioProfesor(profesorId);
+                            enviaParametro.writeUTF(new Gson().toJson(respuestaHorario));
                             break;
 
                         default:
-                            System.out.println("Acción no reconocida: " + accion);
-                            break;
+                            System.out.println("no reconocida: " + accion);
                     }
 
                 } catch (IOException e) {
@@ -77,7 +82,6 @@ public class HiloServidor extends Thread{
                 }
             }
 
-            
             
         } catch (IOException e) {
             // TODO Auto-generated catch block

@@ -46,7 +46,7 @@ public class PanelHorarios extends JPanel {
         tablaHorario.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         JScrollPane scroll = new JScrollPane(tablaHorario);
-        scroll.setBounds(100, 80, 950, 400);
+        scroll.setBounds(100, 80, 950, 366);
         add(scroll);
 
         // Cargar datos desde el servidor

@@ -101,7 +101,7 @@ public class Controlador {
 	        //Enviamos al servidor la peticion
 	        DataOutputStream dos = new DataOutputStream(cliente.getOutputStream());
 	        dos.writeUTF(jsonPeticion);
-	        //dos.flush();
+	        
 
 	        //recibimos la respuesta
 	        DataInputStream dis = new DataInputStream(cliente.getInputStream());
@@ -148,7 +148,79 @@ public class Controlador {
 
 	public void cargarHorario(int profesorId, DefaultTableModel modeloHorario) {
 		// TODO Auto-generated method stub
-		
+		Map<String, Object> peticionHorario = Map.of(
+	            "accion", "HORARIO_PROFESOR",
+	            "profeId", profesorId
+	        );
+
+	        String jsonPeticion = new Gson().toJson(peticionHorario);
+
+	        //Enviamos al servidor la peticion
+	        try {
+				DataOutputStream dos = new DataOutputStream(cliente.getOutputStream());
+				dos.writeUTF(jsonPeticion);
+				
+				//recibimos la respuesta
+		        DataInputStream dis = new DataInputStream(cliente.getInputStream());
+		        String jsonRespuesta = dis.readUTF();
+		        
+		        //Parseamos la respuesta
+		        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+		        Map<String, Object> respuesta = new Gson().fromJson(jsonRespuesta, type);
+		        
+		        if (!"OK".equals(respuesta.get("status"))) {
+		            System.out.println("Error: " + respuesta.get("mensaje"));
+		            return;
+		        }
+		        
+		        //Obtenemos la lista de Horario
+		        Type type2 = new TypeToken<Map<String, Object>>() {}.getType();
+		        Map<String, Object> respuesta2 = new Gson().fromJson(jsonRespuesta, type2);
+		        
+		        Type listaType = new TypeToken<List<Map<String, Object>>>() {}.getType();
+		        List<Map<String, Object>> horario = new Gson().fromJson(
+		                new Gson().toJson(respuesta2.get("horario")),
+		                listaType
+		        );
+		        
+		        // Rellenar tabla
+		        // Mapa para convertir el día en columna
+		        Map<String, Integer> dias = Map.of(
+		            "LUNES", 1,
+		            "MARTES", 2,
+		            "MIERCOLES", 3,
+		            "JUEVES", 4,
+		            "VIERNES", 5
+		        );
+
+		        for (Map<String, Object> clase : horario) {
+
+		            // DIA siempre es String
+		            String diaTexto = ((String) clase.get("dia")).toUpperCase();
+		            int dia = dias.get(diaTexto);
+
+		            // HORA puede ser Number o String → convertir de forma segura
+		            Object horaObj = clase.get("hora");
+		            int hora;
+
+		            if (horaObj instanceof Number) {
+		                hora = ((Number) horaObj).intValue();
+		            } else {
+		                hora = Integer.parseInt((String) horaObj);
+		            }
+
+		            // Asignatura
+		            String asignatura = (String) clase.get("asignatura");
+
+		            // Rellenar celda
+		            modeloHorario.setValueAt(asignatura, hora - 1, dia);
+		        }
+
+		        
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 
 
