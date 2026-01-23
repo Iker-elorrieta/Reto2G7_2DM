@@ -28,8 +28,12 @@ public class Menu extends JFrame {
     private CardLayout cardLayout;
 
     public Menu(Map<String, Object> usuarioMap, Socket cliente, Controlador ctr) {
+        
     	
-    	// Arreglar color azul del menú 
+    	int profesorId = ((Double) usuarioMap.get("id")).intValue();
+    	
+    	
+    	// Arreglar color azul del menu
     	UIManager.put("Menu.selectionBackground", new Color(0, 128, 192)); 
     	UIManager.put("MenuItem.selectionBackground", new Color(0, 100, 160)); 
     	UIManager.put("Menu.selectionForeground", Color.WHITE); 
@@ -64,7 +68,7 @@ public class Menu extends JFrame {
         //---------------------------------------------------------
         //    PANEL HORARIOS
         //----------------------------------------------------------
-        PanelHorarios panelHorarios = new PanelHorarios(usuarioMap);
+        PanelHorarios panelHorarios = new PanelHorarios(profesorId, ctr, cardLayout, panelPrincipal);
 
         //---------------------------------------------------------
         //    PANEL OTROS HORARIOS
@@ -79,7 +83,7 @@ public class Menu extends JFrame {
         //---------------------------------------------------------
         //    PANEL PERFIL
         //----------------------------------------------------------
-        PanelPerfil panelPerfil = new PanelPerfil(usuarioMap);
+        PanelPerfil panelPerfil = new PanelPerfil(usuarioMap, ctr, cardLayout, panelPrincipal);
         
         //---------------------------------------------------------
         //    PANEL CREAR REUNION
@@ -89,8 +93,8 @@ public class Menu extends JFrame {
         //---------------------------------------------------------
         //      PANEL ALUMNOS
         //----------------------------------------------------------
-        int profesorId = ((Double) usuarioMap.get("id")).intValue();
-        PanelAlumnos panelAlumnos = new PanelAlumnos(profesorId, ctr);
+        PanelAlumnos panelAlumnos = new PanelAlumnos(profesorId, ctr, cardLayout, panelPrincipal);
+
 
         //--------------------------------------------------------
         //      AÑADIR LOS PANELES AL CARDLAYOUT

@@ -20,6 +20,7 @@ public class Controlador {
 	private Socket cliente;
 
 	//=============== LOGIN ==============
+	
 	public LoginResult botonLogin(JLabel lblAvisoError, JTextField txtUsuario, JPasswordField pwdField) {
 
 	    String usuario = txtUsuario.getText();
@@ -142,6 +143,12 @@ public class Controlador {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
+	}
+
+
+	public void cargarHorario(int profesorId, DefaultTableModel modeloHorario) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

@@ -11,6 +11,8 @@ import controlador.Controlador;
 
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
+
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -20,7 +22,7 @@ public class PanelAlumnos extends JPanel {
     private static final long serialVersionUID = 1L;
     private JTable table;
 
-    public PanelAlumnos(int profesorId, Controlador ctr) {
+    public PanelAlumnos(int profesorId, Controlador ctr, CardLayout cardLayout, JPanel panelPrincipal) {
 
         setLayout(null);
         setBounds(0, 0, 1144, 588); 
@@ -45,12 +47,11 @@ public class PanelAlumnos extends JPanel {
         
         JButton btnVolver = new JButton("Volver");
         btnVolver.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		
-        		
-        	}
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(panelPrincipal, "menu");
+            }
         });
-        btnVolver.setForeground(new Color(255, 255, 255));
+        btnVolver.setForeground(Color.WHITE);
         btnVolver.setFont(new Font("Arial", Font.BOLD, 13));
         btnVolver.setBackground(new Color(0, 128, 192));
         btnVolver.setBounds(117, 506, 89, 30);
@@ -59,4 +60,3 @@ public class PanelAlumnos extends JPanel {
         ctr.cargarAlumnos(profesorId, modeloTablaAlumnos);
     }
 }
-

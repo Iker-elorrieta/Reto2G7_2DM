@@ -1,5 +1,6 @@
 package ventanas;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Map;
@@ -10,15 +11,17 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import controlador.Controlador;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class PanelPerfil extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JTextField txtNombre, txtUserName, txtDNI, txtTelefono1, txtApellidos, txtEmail, txtTelefono2, txtDireccion;
-    private Controlador ctr = new Controlador();
     
-    public PanelPerfil(Map<String, Object> usuarioMap) {
+    public PanelPerfil(Map<String, Object> usuarioMap, Controlador ctr, CardLayout cardLayout, JPanel panelPrincipal) {
 
         setLayout(null);
         setBounds(0, 0, 1144, 588);
@@ -166,6 +169,18 @@ public class PanelPerfil extends JPanel {
         		txtUserName, 
         		usuarioMap 
         );
+        
+        JButton btnVolver = new JButton("Volver");
+        btnVolver.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+                cardLayout.show(panelPrincipal, "menu");
+        	}
+        });
+        btnVolver.setBackground(new Color(0, 128, 192));
+        btnVolver.setForeground(new Color(255, 255, 255));
+        btnVolver.setFont(new Font("Arial", Font.BOLD, 13));
+        btnVolver.setBounds(101, 511, 89, 29);
+        add(btnVolver);
        
     }
 }
