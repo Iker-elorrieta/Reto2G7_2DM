@@ -73,7 +73,7 @@ public class Menu extends JFrame {
         //---------------------------------------------------------
         //    PANEL OTROS HORARIOS
         //----------------------------------------------------------
-        PanelOtrosHorarios panelOtrosHorarios = new PanelOtrosHorarios(usuarioMap);
+        PanelOtrosHorarios panelOtrosHorarios = new PanelOtrosHorarios(ctr, cardLayout, panelPrincipal);
 
         //---------------------------------------------------------
         //    PANEL REUNIONES

@@ -18,9 +18,9 @@ public class Gestor {
 
     //============ GESTOR LOGIN ===========//
    
-	public List<Map<String, Object>> obtenerUsuarios() {
+	public List<Map<String, Object>> obtenerProfesores() {
 	    Session session = session();
-	    String todosUsuarios = Querys.TODOS_USERS;
+	    String todosUsuarios = Querys.PROFESORES;
 	    List<Users> listaUsuarios = session.createQuery(todosUsuarios, Users.class).list();
 
 	    List<Map<String, Object>> listaMap = new ArrayList<>();
@@ -69,6 +69,8 @@ public class Gestor {
 	}
 	
    
+	//============ OBTENER HORARIO DEL PROFESOR (ID) ===========//
+
 
 	public List<Map<String, Object>> obtenerHorarioProfesor(int profesorId) {
 
@@ -94,6 +96,8 @@ public class Gestor {
 	}
 
 	
+
+
 	
 	
 	 private Session session() {
@@ -102,5 +106,7 @@ public class Gestor {
 			Session session = sesion.openSession();
 			return session;
 		}
+
+
  
 }

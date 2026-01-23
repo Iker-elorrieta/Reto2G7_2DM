@@ -224,5 +224,60 @@ public class Controlador {
 	}
 
 
+	public void cargarProfesores(DefaultTableModel modeloProfes) {
+
+	    //Peticion que le voy a enviar al servidor
+	    Map<String, Object> peticion = Map.of(
+	        "accion", "PROFESORES_LISTA"
+	    );
+
+	    String jsonPeticion = new Gson().toJson(peticion);
+
+	    try {
+	        //Enviar peticion
+	        DataOutputStream dos = new DataOutputStream(cliente.getOutputStream());
+	        dos.writeUTF(jsonPeticion);
+
+	        //Recibir respuesta
+	        DataInputStream dis = new DataInputStream(cliente.getInputStream());
+	        String jsonRespuesta = dis.readUTF();
+
+	        //Parsear respuesta
+	        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+	        Map<String, Object> respuesta = new Gson().fromJson(jsonRespuesta, type);
+
+	        //Comprobar estado
+	        if (!"OK".equals(respuesta.get("status"))) {
+	            System.out.println("Error: " + respuesta.get("mensaje"));
+	            return;
+	        }
+
+	        //Obtener lista de profesores
+	        Type listaType = new TypeToken<List<Map<String, Object>>>() {}.getType();
+	        List<Map<String, Object>> profesores = new Gson().fromJson(
+	            new Gson().toJson(respuesta.get("profesores")),
+	            listaType
+	        );
+
+	        // Limpiar tabla
+	        modeloProfes.setRowCount(0);
+
+	        // Rellenar tabla
+	        for (Map<String, Object> prof : profesores) {
+
+	            int id = ((Number) prof.get("id")).intValue();
+	            String nombre = (String) prof.get("nombre");
+	            String apellidos = (String) prof.get("apellidos");
+
+	            modeloProfes.addRow(new Object[]{id, nombre, apellidos});
+	        }
+
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+
+
 
 }

@@ -11,6 +11,9 @@ import javax.swing.table.DefaultTableModel;
 import controlador.Controlador;
 import java.awt.CardLayout;
 import java.awt.Color;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class PanelHorarios extends JPanel {
 
@@ -48,8 +51,20 @@ public class PanelHorarios extends JPanel {
         JScrollPane scroll = new JScrollPane(tablaHorario);
         scroll.setBounds(100, 80, 950, 366);
         add(scroll);
+        
+        JButton btnNewButton = new JButton("Volver");
+        btnNewButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		cardLayout.show(panelPrincipal, "menu");
+        	}
+        });
+        btnNewButton.setForeground(new Color(255, 255, 255));
+        btnNewButton.setBackground(new Color(0, 128, 192));
+        btnNewButton.setFont(new Font("Arial", Font.BOLD, 13));
+        btnNewButton.setBounds(100, 482, 89, 30);
+        add(btnNewButton);
 
-        // Cargar datos desde el servidor
+        //Cargar datos desde el servidor
         ctr.cargarHorario(profesorId, modeloHorario);
     }
 }

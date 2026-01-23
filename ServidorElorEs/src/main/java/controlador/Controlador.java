@@ -15,41 +15,36 @@ public class Controlador {
 
     public Map<String, Object> verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException {
 
-        //El gestor devuelve List<Map<String,Object>>
-        List<Map<String, Object>> usuarios = gestor.obtenerUsuarios();
-        if (usuarios == null) {
-        	return null;
+        //Obtenemos la lista de profesores
+        List<Map<String, Object>> profesores = gestor.obtenerProfesores();
+        if (profesores == null) {
+            return null;
         }
 
-        //Buscamos al usuario que coincida con el usuario introducido
-        for (Map<String, Object> u : usuarios) {
+        //Buscamos el profesor por username
+        for (Map<String, Object> prof : profesores) {
 
-            String usernameBD = (String) u.get("username");
-            String passwordBD = (String) u.get("password");
-            String tipo = (String) u.get("tipo");
+            String usernameBD = (String) prof.get("username");
+            String passwordBD = (String) prof.get("password");
 
-            //Comprobamos que sea correcto
+            //Coincide el usuario?
             if (usernameBD.equals(usuario)) {
 
-                //Solo permite profesores
-                if (!tipo.equalsIgnoreCase("profesor")) {
-                    return null;
-                }
-
-                // Hasheo la contraseña de la BD
+                //Hashear la contraseña almacenada en BD
                 String pwdHashBD = hash(passwordBD);
 
-                // Comparo las contraseñas
+                //Comparar hashes
                 if (pwdHashBD.equals(hashIntroducido)) {
-                    return u; //Usuario valido 
+                    return prof; //Login correcto
                 } else {
-                    return null;
+                    return null; //Contraseña incorrecta
                 }
             }
         }
 
-        return null; //Usuario no encontrado
+        return null; // Usuario no encontrado
     }
+
 
     
 
@@ -101,5 +96,26 @@ public class Controlador {
 
 	    return respuesta;
 	}
+
+
+
+	public Map<String, Object> obtenerListaProfesores() {
+
+	    // Pedimos al gestor la lista de profesores
+	    List<Map<String, Object>> profesores = gestor.obtenerProfesores();
+
+	    Map<String, Object> respuesta = new HashMap<>();
+
+	    if (profesores == null) {
+	        respuesta.put("status", "ERROR");
+	        respuesta.put("mensaje", "No se pudo obtener la lista de profesores");
+	    } else {
+	        respuesta.put("status", "OK");
+	        respuesta.put("profesores", profesores);
+	    }
+
+	    return respuesta;
+	}
+
 
 }

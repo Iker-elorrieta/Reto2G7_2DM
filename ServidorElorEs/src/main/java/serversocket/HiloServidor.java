@@ -71,6 +71,11 @@ public class HiloServidor extends Thread{
                             Map<String, Object> respuestaHorario = ctr.obtenerHorarioProfesor(profesorId);
                             enviaParametro.writeUTF(new Gson().toJson(respuestaHorario));
                             break;
+                            
+                        case "PROFESORES_LISTA":
+                        	Map<String, Object> respuestaProfesores = ctr.obtenerListaProfesores();
+							enviaParametro.writeUTF(new Gson().toJson(respuestaProfesores));
+							break;
 
                         default:
                             System.out.println("no reconocida: " + accion);

@@ -2,7 +2,7 @@ package gestores;
 
 public class Querys {
 	
-	public static final String TODOS_USERS = "FROM Users";
+	public static final String PROFESORES = "FROM Users u WHERE u.tipos.name = 'profesor'";
 	public static final String ALUMNOS_DE_PROFESOR =
 		    "SELECT DISTINCT u.id, u.nombre, u.apellidos, u.email, m.curso, c.nombre " +
 		    "FROM Horarios h " +
