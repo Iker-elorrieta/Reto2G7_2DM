@@ -19,13 +19,18 @@ public class Gestor {
     //============ GESTOR LOGIN ===========//
    
 	public List<Map<String, Object>> obtenerProfesores() {
+		
+		//Gestion de la conexion a la base de datos
 	    Session session = session();
-	    String todosUsuarios = Querys.PROFESORES;
-	    List<Users> listaUsuarios = session.createQuery(todosUsuarios, Users.class).list();
+	    
+	    //Query para obtener solo los profesores
+	    String todosProfesores = Querys.PROFESORES;
+	    List<Users> listaProfesores = session.createQuery(todosProfesores, Users.class).list();
 
 	    List<Map<String, Object>> listaMap = new ArrayList<>();
 
-	    for (Users u : listaUsuarios) {
+	    //Obtenemos todos los datos de los profesores y los guardamos en la lista
+	    for (Users u : listaProfesores) {
 	        Map<String, Object> map = new HashMap<>();
 	        map.put("id", u.getId());
 	        map.put("username", u.getUsername());
@@ -40,7 +45,6 @@ public class Gestor {
 	        map.put("dni", u.getDni());
 	        listaMap.add(map);
 	    }
-
 	    return listaMap;
 	}
 	
@@ -49,12 +53,14 @@ public class Gestor {
 	public List<Map<String, Object>> obtenerAlumnosProfesor(int profeId) {
 		// TODO Auto-generated method stub
 		Session session = session();
+		//Query para obtener los alumnos de un profesor concreto
 		String alumnosProfesor = Querys.ALUMNOS_DE_PROFESOR;
 		
 		List<Object[]> listaAlumnos = session.createQuery(alumnosProfesor, Object[].class).setParameter("profeId", profeId).getResultList();
 		
 		List<Map<String, Object>> listaMap = new ArrayList<>();
 
+		//Recorremos la lista de alumnos y los guardamos en un map
 		for (Object[] fila: listaAlumnos) {
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", fila[0]);
@@ -77,10 +83,7 @@ public class Gestor {
 	    Session session = session();
 	    String horarioProfesor = Querys.HORARIO_PROFESOR;
 
-	    List<Object[]> listaHorario = session
-	        .createQuery(horarioProfesor, Object[].class)
-	        .setParameter("profeId", profesorId)
-	        .getResultList();
+	    List<Object[]> listaHorario = session.createQuery(horarioProfesor, Object[].class).setParameter("profeId", profesorId).getResultList();
 
 	    List<Map<String, Object>> listaMap = new ArrayList<>();
 
@@ -91,7 +94,6 @@ public class Gestor {
 	        map.put("asignatura", fila[2]);
 	        listaMap.add(map);
 	    }
-
 	    return listaMap;
 	}
 

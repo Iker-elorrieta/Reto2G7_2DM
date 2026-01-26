@@ -139,7 +139,9 @@ public class Login extends JFrame {
         // ================= LÓGICA DEL BOTÓN =================
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	//Gestionamos el login desde el controlador
                 LoginResult result = ctr.botonLogin(lblAvisoError, txtUsuario, pwdField);
+                //Si el login es correcto abrimos la ventana del menú
                 if (result != null) {
                     Menu frame = new Menu(result.usuarioMap, result.cliente, ctr);
                     frame.setVisible(true);

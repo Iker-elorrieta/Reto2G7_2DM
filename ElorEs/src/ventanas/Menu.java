@@ -29,7 +29,7 @@ public class Menu extends JFrame {
 
     public Menu(Map<String, Object> usuarioMap, Socket cliente, Controlador ctr) {
         
-    	
+    	//Obtener el ID del profesor
     	int profesorId = ((Double) usuarioMap.get("id")).intValue();
     	
     	
@@ -232,9 +232,10 @@ public class Menu extends JFrame {
         });
         estilizarItem.accept(menuItemCrearReunion);
         mnNewMenu.add(menuItemCrearReunion);
+        
 
         //---------------------------------------------------------
-        //    BOTON DESCONECTAR (ELEGANTE + HOVER)
+        //    			BOTON DESCONECTAR 
         //--------------------------------------------------------
         
         JButton btnDesconectar = new JButton("Desconectar");
@@ -261,7 +262,7 @@ public class Menu extends JFrame {
 
         btnDesconectar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	//Lo enviamos al controlador
+            	//Gestionamos la desconexión en el controlador
             	ctr.cerrarSesion(cliente);
                 dispose();
             }

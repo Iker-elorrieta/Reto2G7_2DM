@@ -15,8 +15,9 @@ public class Controlador {
 
     public Map<String, Object> verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException {
 
-        //Obtenemos la lista de profesores
+        //Llamamos al gestor para obtener la lista de profesores y la guardamos en una lista
         List<Map<String, Object>> profesores = gestor.obtenerProfesores();
+        //Comprobamos que haya devuelto algo
         if (profesores == null) {
             return null;
         }
@@ -35,13 +36,12 @@ public class Controlador {
 
                 //Comparar hashes
                 if (pwdHashBD.equals(hashIntroducido)) {
-                    return prof; //Login correcto
+                    return prof; //Login correcto, este "prof" es el profesor correcto y la recogemos en el servidor
                 } else {
                     return null; //Contraseña incorrecta
                 }
             }
         }
-
         return null; // Usuario no encontrado
     }
 
@@ -65,14 +65,16 @@ public class Controlador {
     }
 
 
-
+    
 	public Map<String, Object> obtenerAlumnosProfesor(int profeId) {
 		// TODO Auto-generated method stub
+		//Llamamos al gestor para obtener la lista de alumnos de ese profesor
 		List<Map<String, Object>> alumnos = gestor.obtenerAlumnosProfesor(profeId);
+		
 		if(alumnos == null) {
 			return null;
 		} else {
-			
+			//Devuelve un map con el estado OK y la lista de alumnos, "un json dentro de otro json"
 			return Map.of(
 					"status", "OK", 
 					"alumnos", alumnos);

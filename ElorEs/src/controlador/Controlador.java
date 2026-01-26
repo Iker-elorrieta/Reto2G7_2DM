@@ -19,36 +19,45 @@ import ventanas.Login;
 public class Controlador {
 	private Socket cliente;
 
+
 	//=============== LOGIN ==============
 	
 	public LoginResult botonLogin(JLabel lblAvisoError, JTextField txtUsuario, JPasswordField pwdField) {
-
+		
+		//recoge los datos de los campos que ha introducido el usuario
 	    String usuario = txtUsuario.getText();
 	    String pwd = new String(pwdField.getPassword());
 
+	    //Se conecta al servidor
 	    try {
 	        cliente = new Socket("localhost", 4000);
 	        DataOutputStream enviaParametro = new DataOutputStream(cliente.getOutputStream());
 	        DataInputStream recibeParametro = new DataInputStream(cliente.getInputStream());
 
-	        //Enviamos al servidor los parametros
+	        //Enviamos al servidor los parametros (lineas 41 y 42 en HiloServidor.java)
 	        enviaParametro.writeUTF(usuario);
 	        enviaParametro.writeUTF(pwd);
 	        
-	        //Recibimos el json que se envia en HiloServidor si coinciden las credenciales
+	        /*Recibimos el json que se envia en HiloServidor si coinciden las credenciales 
+	         * Linea 56 o 59 en HiloServidor.java
+	         */
 	        String respuestaUsuario = recibeParametro.readUTF();
 
+	        /*Comprobamos que la respuesta no sea el error
+	         * y lo guardamos en LoginResult para no perder la conexion del socket.
+	         * (como no se pueden pasar 2 objetos a la vez, creamos esta clase LoginResult 
+	         * con 2 atributos: el map del usuario y el socket del cliente y le pasamos el objeto)
+	         */
 	        if (!respuestaUsuario.equals("Usuario o contraseña erróneos")) {
 	        	
 	        	Type type = new TypeToken<Map<String, Object>>() {}.getType();
 	        	Map<String, Object> usuarioMap = new Gson().fromJson(respuestaUsuario, type);
 	            return new LoginResult(usuarioMap, cliente);
                 
-	        } else {
+	        } else { //Si no, mostramos el error en el lblAvisoError
 	            lblAvisoError.setText(respuestaUsuario);
 	            txtUsuario.setText("");
 	            pwdField.setText("");
-	           
 	        }
 
 	    } catch (IOException ex) {
@@ -90,44 +99,47 @@ public class Controlador {
 	
 	public void cargarAlumnos(int profesorId, DefaultTableModel modeloTablaAlumnos) {
 	    try {
-	        //Creamos un json de una peticion
-	        Map<String, Object> peticion = Map.of(
+	        //Creamos un map de una peticion
+	    	Map<String, Object> peticion = Map.of(
 	            "accion", "ALUMNOS_DE_PROFESOR",
 	            "profeId", profesorId
 	        );
-
+	    	//convertimos la peticion a json
 	        String jsonPeticion = new Gson().toJson(peticion);
 
-	        //Enviamos al servidor la peticion
-	        DataOutputStream dos = new DataOutputStream(cliente.getOutputStream());
-	        dos.writeUTF(jsonPeticion);
+	        //Enviamos al servidor el json de la peticion (linea 70 en HiloServidor.java)
+	        DataOutputStream enviaParametro = new DataOutputStream(cliente.getOutputStream());
+	        enviaParametro.writeUTF(jsonPeticion);
 	        
 
-	        //recibimos la respuesta
-	        DataInputStream dis = new DataInputStream(cliente.getInputStream());
-	        String jsonRespuesta = dis.readUTF();
+	        //recibimos la respuesta (linea 90 en HiloServidor.java)
+	        DataInputStream recibeParametro = new DataInputStream(cliente.getInputStream());
+	        String jsonRespuesta = recibeParametro.readUTF();
 
 	        //Parseamos la respuesta
 	        Type type = new TypeToken<Map<String, Object>>() {}.getType();
 	        Map<String, Object> respuesta = new Gson().fromJson(jsonRespuesta, type);
 
+	        //Leemos la respuesta
 	        if (!"OK".equals(respuesta.get("status"))) {
 	            System.out.println("Error: " + respuesta.get("mensaje"));
 	            return;
 	        }
 
 	        //Obtenemos la lista de Alumnos
-	        Type type2 = new TypeToken<Map<String, Object>>() {}.getType();
-	        Map<String, Object> respuesta2 = new Gson().fromJson(jsonRespuesta, type2);
+			//Se hace 2 veces porque la respuesta json que envia el servidor tiene otro json dentro
+	        Type tipoRespuestaCompleta = new TypeToken<Map<String, Object>>() {}.getType();
+	        Map<String, Object> respuestaServidor = new Gson().fromJson(jsonRespuesta, tipoRespuestaCompleta);
 
-	        Type listaType = new TypeToken<List<Map<String, Object>>>() {}.getType();
+	        //El json de alumnos que esta dentro de la respuesta del servidor
+	        Type tipoListaAlumnos = new TypeToken<List<Map<String, Object>>>() {}.getType();
 	        List<Map<String, Object>> alumnos = new Gson().fromJson(
-	                new Gson().toJson(respuesta2.get("alumnos")),
-	                listaType
+	                new Gson().toJson(respuestaServidor.get("alumnos")),
+	                tipoListaAlumnos	
 	        );
 
 
-	        // 6. Rellenar tabla
+	        //Rellenar tabla con los datos de los alumnos
 	        modeloTablaAlumnos.setRowCount(0);
 
 	        for (Map<String, Object> alum : alumnos) {
@@ -146,76 +158,89 @@ public class Controlador {
 	}
 
 
+	//=============== CARGAR HORARIO ==============
+	
 	public void cargarHorario(int profesorId, DefaultTableModel modeloHorario) {
 		// TODO Auto-generated method stub
+		
+		//Creamos un json de una peticion, luego el servidor leera el json y
+		//dependiendo de lo que pida el json, hara una cosa u otra
+		
+		//Creamos el map de la peticion
 		Map<String, Object> peticionHorario = Map.of(
 	            "accion", "HORARIO_PROFESOR",
 	            "profeId", profesorId
-	        );
+				);
+		
+		//Convertimos la peticion a json
+		String jsonPeticion = new Gson().toJson(peticionHorario);
 
-	        String jsonPeticion = new Gson().toJson(peticionHorario);
-
-	        //Enviamos al servidor la peticion
-	        try {
-				DataOutputStream dos = new DataOutputStream(cliente.getOutputStream());
-				dos.writeUTF(jsonPeticion);
+		//Enviamos al servidor el json de la peticion
+		try {
+			DataOutputStream enviaParametro = new DataOutputStream(cliente.getOutputStream());
+			enviaParametro.writeUTF(jsonPeticion);
 				
-				//recibimos la respuesta
-		        DataInputStream dis = new DataInputStream(cliente.getInputStream());
-		        String jsonRespuesta = dis.readUTF();
-		        
-		        //Parseamos la respuesta
-		        Type type = new TypeToken<Map<String, Object>>() {}.getType();
-		        Map<String, Object> respuesta = new Gson().fromJson(jsonRespuesta, type);
-		        
-		        if (!"OK".equals(respuesta.get("status"))) {
-		            System.out.println("Error: " + respuesta.get("mensaje"));
-		            return;
-		        }
-		        
-		        //Obtenemos la lista de Horario
-		        Type type2 = new TypeToken<Map<String, Object>>() {}.getType();
-		        Map<String, Object> respuesta2 = new Gson().fromJson(jsonRespuesta, type2);
-		        
-		        Type listaType = new TypeToken<List<Map<String, Object>>>() {}.getType();
-		        List<Map<String, Object>> horario = new Gson().fromJson(
-		                new Gson().toJson(respuesta2.get("horario")),
-		                listaType
-		        );
-		        
-		        // Rellenar tabla
-		        // Mapa para convertir el día en columna
-		        Map<String, Integer> dias = Map.of(
-		            "LUNES", 1,
+			//recibimos la respuesta (linea 99 en HiloServidor.java)
+			DataInputStream recibeParametro = new DataInputStream(cliente.getInputStream());
+			String jsonRespuestaHorarios = recibeParametro.readUTF();
+
+			//Parseamos la respuesta
+			Type type = new TypeToken<Map<String, Object>>() {}.getType();
+			Map<String, Object> respuestaHorarios = new Gson().fromJson(jsonRespuestaHorarios, type);
+
+			//Comprobamos el estado de la respuesta del servidor
+			if (!"OK".equals(respuestaHorarios.get("status"))) {
+				System.out.println("Error: " + respuestaHorarios.get("mensaje"));
+				return;
+			}
+
+			//Obtenemos la lista de Horario
+			//Se hace 2 veces porque la respuesta json que envia el servidor tiene otro json dentro
+			Type tipoRespuestaCompleta = new TypeToken<Map<String, Object>>() {}.getType();
+			Map<String, Object> respuestaServidor = new Gson().fromJson(jsonRespuestaHorarios, tipoRespuestaCompleta);
+
+			//El json de horario que esta dentro de la respuesta del servidor
+			Type tipoListaHorario = new TypeToken<List<Map<String, Object>>>() {}.getType();
+			List<Map<String, Object>> listaHorario = new Gson().fromJson(
+					new Gson().toJson(respuestaServidor.get("horario")),
+					tipoListaHorario
+					);
+
+
+			//Rellenar tabla
+			//Mapa para convertir el dia en columna
+			Map<String, Integer> dias = Map.of(
+					"LUNES", 1,
 		            "MARTES", 2,
 		            "MIERCOLES", 3,
 		            "JUEVES", 4,
 		            "VIERNES", 5
 		        );
 
-		        for (Map<String, Object> clase : horario) {
+		        
+			for (Map<String, Object> atributo : listaHorario) {
 
-		            // DIA siempre es String
-		            String diaTexto = ((String) clase.get("dia")).toUpperCase();
-		            int dia = dias.get(diaTexto);
+				//Coge los dias del mapa y los convierte en numero de columna
+				//Lunes = 1, Martes = 2, etc
+				String diaTexto = ((String) atributo.get("dia")).toUpperCase();
+				int dia = dias.get(diaTexto);
 
-		            // HORA puede ser Number o String → convertir de forma segura
-		            Object horaObj = clase.get("hora");
-		            int hora;
+				//Coge la hora y la convierte en int ( de 1 a 6 horas)
+				Object horaObj = atributo.get("hora");
+				int hora;
 
-		            if (horaObj instanceof Number) {
-		                hora = ((Number) horaObj).intValue();
-		            } else {
-		                hora = Integer.parseInt((String) horaObj);
-		            }
+				if (horaObj instanceof Number) {
+					hora = ((Number) horaObj).intValue();
+				} else {
+					hora = Integer.parseInt((String) horaObj);
+				}
 
-		            // Asignatura
-		            String asignatura = (String) clase.get("asignatura");
+				//Coge las asignaturas
+				String asignatura = (String) atributo.get("asignatura");
 
-		            // Rellenar celda
-		            modeloHorario.setValueAt(asignatura, hora - 1, dia);
-		        }
-
+				//Rellenar celda (-1 porque las filas empiezan en 0)
+				modeloHorario.setValueAt(asignatura, hora - 1, dia);
+			}
 		        
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -223,24 +248,27 @@ public class Controlador {
 			}
 	}
 
-
+	//=============== CARGAR PROFESORES (para el horario) ==============
+	
 	public void cargarProfesores(DefaultTableModel modeloProfes) {
 
-	    //Peticion que le voy a enviar al servidor
-	    Map<String, Object> peticion = Map.of(
+		//Creamos un json de una peticion, luego el servidor leera el json y
+			//dependiendo de lo que pida el json, hara una cosa u otra
+		Map<String, Object> peticion = Map.of(
 	        "accion", "PROFESORES_LISTA"
 	    );
 
+		//Convertimos la peticion a json
 	    String jsonPeticion = new Gson().toJson(peticion);
 
 	    try {
 	        //Enviar peticion
-	        DataOutputStream dos = new DataOutputStream(cliente.getOutputStream());
-	        dos.writeUTF(jsonPeticion);
+	        DataOutputStream enviaParametro = new DataOutputStream(cliente.getOutputStream());
+	        enviaParametro.writeUTF(jsonPeticion);
 
 	        //Recibir respuesta
-	        DataInputStream dis = new DataInputStream(cliente.getInputStream());
-	        String jsonRespuesta = dis.readUTF();
+	        DataInputStream reciveParametro = new DataInputStream(cliente.getInputStream());
+	        String jsonRespuesta = reciveParametro.readUTF();
 
 	        //Parsear respuesta
 	        Type type = new TypeToken<Map<String, Object>>() {}.getType();
@@ -259,10 +287,10 @@ public class Controlador {
 	            listaType
 	        );
 
-	        // Limpiar tabla
+	        //Limpiar tabla
 	        modeloProfes.setRowCount(0);
 
-	        // Rellenar tabla
+	        //Rellenar tabla
 	        for (Map<String, Object> prof : profesores) {
 
 	            int id = ((Number) prof.get("id")).intValue();

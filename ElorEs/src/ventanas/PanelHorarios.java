@@ -33,16 +33,17 @@ public class PanelHorarios extends JPanel {
         lblTitulo.setBounds(450, 20, 300, 30);
         add(lblTitulo);
 
+        //Crear el modelo de la tabla con los días de la semana y las horas
         String[] columnas = {"", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"};
-
         DefaultTableModel modeloHorario = new DefaultTableModel(columnas, 0);
-
+        
+        //6 filas para las horas
         for (int i = 1; i <= 6; i++) {
             Object[] fila = new Object[6];
             fila[0] = "Hora " + i;
             modeloHorario.addRow(fila);
         }
-
+        //Crear la tabla con scroll pane
         tablaHorario = new JTable(modeloHorario);
         tablaHorario.setRowHeight(40);
         tablaHorario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -65,6 +66,7 @@ public class PanelHorarios extends JPanel {
         add(btnNewButton);
 
         //Cargar datos desde el servidor
+        //Le pasamos el id del profesor logeado y el modelo de la tabla para rellenarla
         ctr.cargarHorario(profesorId, modeloHorario);
     }
 }
