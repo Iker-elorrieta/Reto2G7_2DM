@@ -144,7 +144,6 @@ public class Controlador {
 
 	        for (Map<String, Object> alum : alumnos) {
 	            modeloTablaAlumnos.addRow(new Object[]{
-	                alum.get("id"),
 	                alum.get("nombre"),
 	                alum.get("apellidos"),
 	                alum.get("curso"),

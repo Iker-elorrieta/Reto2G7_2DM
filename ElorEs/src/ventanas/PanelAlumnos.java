@@ -40,7 +40,7 @@ public class PanelAlumnos extends JPanel {
         scrollPaneAlumnos.setViewportView(table);
         
         DefaultTableModel modeloTablaAlumnos = new DefaultTableModel(
-            new Object[] {"ID", "Nombre", "Apellidos", "Curso", "Ciclo"}, 
+            new Object[] {"Nombre", "Apellidos", "Curso", "Ciclo"}, 
             0
         );
         table.setModel(modeloTablaAlumnos);
