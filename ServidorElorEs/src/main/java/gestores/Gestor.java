@@ -84,8 +84,10 @@ public class Gestor {
 
 	    Session session = session();
 	    String horarioProfesor = Querys.HORARIO_PROFESOR;
+	    
+		Users profesorObj = session.get(Users.class, profesorId);
 
-	    List<Object[]> listaHorario = session.createQuery(horarioProfesor, Object[].class).setParameter("profeId", profesorId).getResultList();
+	    List<Object[]> listaHorario = session.createQuery(horarioProfesor, Object[].class).setParameter("profesor", profesorObj).getResultList();
 
 	    List<Map<String, Object>> listaMap = new ArrayList<>();
 

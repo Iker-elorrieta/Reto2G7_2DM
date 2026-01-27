@@ -25,7 +25,7 @@ public class Controlador {
         //Buscamos el profesor por username
         for (Map<String, Object> prof : profesores) {
 
-            String usernameBD = (String) prof.get("username");
+            String usernameBD =  (String) prof.get("username");
             String passwordBD = (String) prof.get("password");
 
             //Coincide el usuario?

@@ -24,11 +24,5 @@ public class Querys {
 		    "SELECT h.hora, h.dia, mo.nombre " +
 		    "FROM Horarios h " +
 		    "JOIN h.modulos mo " +
-		    "WHERE h.users.id = :profeId";
-
-
-
-
-
-
+		    "WHERE h.users = :profesor";
 }
