@@ -56,7 +56,9 @@ public class Gestor {
 		//Query para obtener los alumnos de un profesor concreto
 		String alumnosProfesor = Querys.ALUMNOS_DE_PROFESOR;
 		
-		List<Object[]> listaAlumnos = session.createQuery(alumnosProfesor, Object[].class).setParameter("profeId", profeId).getResultList();
+		Users profesorObj = session.get(Users.class, profeId);
+
+		List<Object[]> listaAlumnos = session.createQuery(alumnosProfesor, Object[].class).setParameter("profesor", profesorObj).getResultList();
 		
 		List<Map<String, Object>> listaMap = new ArrayList<>();
 
