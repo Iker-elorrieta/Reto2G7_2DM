@@ -87,6 +87,7 @@ public class Gestor {
 	    
 		Users profesorObj = session.get(Users.class, profesorId);
 
+		//Object porque la query devuelve varias columnas, no un objeto concreto. Devuelve hora, dia y modulo
 	    List<Object[]> listaHorario = session.createQuery(horarioProfesor, Object[].class).setParameter("profesor", profesorObj).getResultList();
 
 	    List<Map<String, Object>> listaMap = new ArrayList<>();
