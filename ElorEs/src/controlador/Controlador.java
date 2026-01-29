@@ -223,7 +223,7 @@ public class Controlador {
 				int dia = dias.get(diaTexto);
 				
 				modeloHorario.setValueAt(asignatura, hora - 1, dia);
-			}
+				}
 		        
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

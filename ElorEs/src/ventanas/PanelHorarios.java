@@ -45,11 +45,13 @@ public class PanelHorarios extends JPanel {
         }
         //Crear la tabla con scroll pane
         tablaHorario = new JTable(modeloHorario);
+        tablaHorario.setEnabled(false);
         tablaHorario.setRowHeight(40);
         tablaHorario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         tablaHorario.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         JScrollPane scroll = new JScrollPane(tablaHorario);
+        scroll.setEnabled(false);
         scroll.setBounds(100, 80, 950, 366);
         add(scroll);
         
