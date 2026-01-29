@@ -9,7 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import com.example.ProyectoSpringboot.modelo.Users;
-
+import com.google.gson.Gson;
 
 import controlador.HibernateUtil;
 
@@ -80,26 +80,18 @@ public class Gestor {
 	//============ OBTENER HORARIO DEL PROFESOR (ID) ===========//
 
 
-	public List<Map<String, Object>> obtenerHorarioProfesor(int profesorId) {
+	public String obtenerHorarioProfesor(int profesorId) {
 
 	    Session session = session();
-	    String horarioProfesor = Querys.HORARIO_PROFESOR;
+	   
 	    
 		Users profesorObj = session.get(Users.class, profesorId);
 
+		List<Object[]> resultado = session .createQuery(Querys.HORARIO_PROFESOR, Object[].class) .setParameter("profesor", profesorObj) .getResultList();
 		//Object porque la query devuelve varias columnas, no un objeto concreto. Devuelve hora, dia y modulo
-	    List<Object[]> listaHorario = session.createQuery(horarioProfesor, Object[].class).setParameter("profesor", profesorObj).getResultList();
-
-	    List<Map<String, Object>> listaMap = new ArrayList<>();
-
-	    for (Object[] fila : listaHorario) {
-	        Map<String, Object> map = new HashMap<>();
-	        map.put("hora", fila[0]);
-	        map.put("dia", fila[1]);
-	        map.put("asignatura", fila[2]);
-	        listaMap.add(map);
-	    }
-	    return listaMap;
+		String json = new Gson().toJson(resultado);
+		return json;
+		
 	}
 
 	

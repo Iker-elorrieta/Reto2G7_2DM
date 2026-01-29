@@ -7,6 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import gestores.Gestor;
 
 public class Controlador {
@@ -83,20 +88,23 @@ public class Controlador {
 
 
 
-	public Map<String, Object> obtenerHorarioProfesor(int profesorId) {
+	public String obtenerHorarioProfesor(int profesorId) {
 
-	    List<Map<String, Object>> horario = gestor.obtenerHorarioProfesor(profesorId);
-	    Map<String, Object> respuesta = new HashMap<>();
+	    String horario = gestor.obtenerHorarioProfesor(profesorId);
+	    JsonObject respuesta = new JsonObject();
 
-	    if (horario == null) {
-	        respuesta.put("status", "ERROR");
-	        respuesta.put("mensaje", "No se pudo obtener el horario");
-	    } else {
-	        respuesta.put("status", "OK");
-	        respuesta.put("horario", horario);
-	    }
+	    if (horario == null || horario.isEmpty()) {
+	    	respuesta.addProperty("status", "ERROR");
+	    	respuesta.addProperty("mensaje", "No se pudo obtener el horario");
+	    	} else { 
+	    		respuesta.addProperty("status", "OK");
+	    		JsonElement horarioJson = JsonParser.parseString(horario);
+	    		respuesta.add("horario", horarioJson); 
+	    		}
 
-	    return respuesta;
+	    String json = new Gson().toJson(respuesta); 
+	    return json;
+	    
 	}
 
 

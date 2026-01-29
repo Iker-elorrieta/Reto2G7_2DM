@@ -12,6 +12,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import ventanas.Login;
 
@@ -184,26 +186,22 @@ public class Controlador {
 			String jsonRespuestaHorarios = recibeParametro.readUTF();
 
 			//Parseamos la respuesta
-			Type type = new TypeToken<Map<String, Object>>() {}.getType();
-			Map<String, Object> respuestaHorarios = new Gson().fromJson(jsonRespuestaHorarios, type);
+			JsonObject respuesta = new Gson().fromJson(jsonRespuestaHorarios, JsonObject.class);
 
 			//Comprobamos el estado de la respuesta del servidor
-			if (!"OK".equals(respuestaHorarios.get("status"))) {
-				System.out.println("Error: " + respuestaHorarios.get("mensaje"));
-				return;
+			String status = respuesta.get("status").getAsString(); 
+			if (!status.equals("OK")) { 
+				System.out.println("Error: " + respuesta.get("mensaje").getAsString());
+				return; 
 			}
 
 			//Obtenemos la lista de Horario
 			//Se hace 2 veces porque la respuesta json que envia el servidor tiene otro json dentro
-			Type tipoRespuestaCompleta = new TypeToken<Map<String, Object>>() {}.getType();
-			Map<String, Object> respuestaServidor = new Gson().fromJson(jsonRespuestaHorarios, tipoRespuestaCompleta);
+			JsonArray horarioArray = respuesta.getAsJsonArray("horario");
 
 			//El json de horario que esta dentro de la respuesta del servidor
-			Type tipoListaHorario = new TypeToken<List<Map<String, Object>>>() {}.getType();
-			List<Map<String, Object>> listaHorario = new Gson().fromJson(
-					new Gson().toJson(respuestaServidor.get("horario")),
-					tipoListaHorario
-					);
+			Type tipoLista = new TypeToken<List<List<Object>>>(){}.getType();
+			List<List<Object>> listaHorario = new Gson().fromJson(horarioArray, tipoLista);
 
 
 			//Rellenar tabla
@@ -217,27 +215,13 @@ public class Controlador {
 		        );
 
 		        
-			for (Map<String, Object> atributo : listaHorario) {
-
-				//Coge los dias del mapa y los convierte en numero de columna
-				//Lunes = 1, Martes = 2, etc
-				String diaTexto = ((String) atributo.get("dia")).toUpperCase();
+			for (List<Object> fila : listaHorario) { 
+				int hora = ((Number) fila.get(0)).intValue();
+				String diaTexto = ((String) fila.get(1)).toUpperCase();
+				String asignatura = (String) fila.get(2);
+				
 				int dia = dias.get(diaTexto);
-
-				//Coge la hora y la convierte en int ( de 1 a 6 horas)
-				Object horaObj = atributo.get("hora");
-				int hora;
-
-				if (horaObj instanceof Number) {
-					hora = ((Number) horaObj).intValue();
-				} else {
-					hora = Integer.parseInt((String) horaObj);
-				}
-
-				//Coge las asignaturas
-				String asignatura = (String) atributo.get("asignatura");
-
-				//Rellenar celda (-1 porque las filas empiezan en 0)
+				
 				modeloHorario.setValueAt(asignatura, hora - 1, dia);
 			}
 		        

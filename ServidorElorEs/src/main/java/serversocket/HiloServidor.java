@@ -94,9 +94,9 @@ public class HiloServidor extends Thread{
                             
                         case "HORARIO_PROFESOR":
                             int profesorId = ((Double) peticion.get("profeId")).intValue();
-                            Map<String, Object> respuestaHorario = ctr.obtenerHorarioProfesor(profesorId);
+                           String respuestaHorario = ctr.obtenerHorarioProfesor(profesorId);
                             //(Linea 185 en ElorEs Controlador.java)
-                            enviaParametro.writeUTF(new Gson().toJson(respuestaHorario));
+                            enviaParametro.writeUTF(respuestaHorario);
                             break;
                             
 						//============ OBTENER LISTA DE PROFESORES ===========//
