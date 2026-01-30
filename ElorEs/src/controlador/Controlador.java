@@ -373,7 +373,7 @@ public class Controlador {
 				
 				// Cogemos los dias de la fecha completa
 				String diaTexto = dias.get(diaEnum);
-				if (diaTexto == null) continue; // if si es sabado o domingo se convierte en null
+				
 				
 				int dia = columna.get(diaTexto);
 				
@@ -382,15 +382,23 @@ public class Controlador {
 				int filaTabla = horaTabla - 1;
 				
 				
-				if (filaTabla < 0 || filaTabla >= modeloHorario.getRowCount()) continue;
-				
 				//Titulo para la reunion
 				Object tituloObj = fila.get(1);
-				String titulo = (tituloObj == null) ? "Reunión" : tituloObj.toString();
+				String titulo;
+				if(tituloObj == null) {
+					titulo="Reunión";
+				}else {
+					titulo = tituloObj.toString();
+				}
 				
 				//Lee lo que ya hay en la celda 
 				Object actualObj = modeloHorario.getValueAt(filaTabla, dia);
-				String actual = (actualObj == null) ? "" : actualObj.toString();
+				String actual;
+				if(actualObj == null) {
+					actual = "";
+				}else {
+					actual = actualObj.toString();
+				}
 				
 				//rellena la tabla 
 				if (actual != null && !actual.isEmpty()) {
@@ -405,6 +413,8 @@ public class Controlador {
 				e.printStackTrace();
 			}
 	}
+	
+	//===================================================================
 
 
 }
