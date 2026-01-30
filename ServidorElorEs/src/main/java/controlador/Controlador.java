@@ -106,6 +106,24 @@ public class Controlador {
 	    return json;
 	    
 	}
+	
+	
+	public String obtenerReunionesProfesor(int profesorId) { 
+		String reuniones = gestor.obtenerReunionesProfesor(profesorId);
+		JsonObject respuesta = new JsonObject();
+		
+		if (reuniones == null || reuniones.isEmpty()) {
+			respuesta.addProperty("status", "ERROR");
+			respuesta.addProperty("mensaje", "No se pudieron obtener las reuniones");
+		} else {
+			respuesta.addProperty("status", "OK");
+			JsonElement reunionesJson = JsonParser.parseString(reuniones);
+			respuesta.add("reuniones", reunionesJson);
+		}
+		
+		String jsonReuniones = new Gson().toJson(respuesta);
+		return jsonReuniones;
+	}
 
 
 

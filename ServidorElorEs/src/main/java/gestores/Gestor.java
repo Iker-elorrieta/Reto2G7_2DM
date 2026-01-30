@@ -95,6 +95,17 @@ public class Gestor {
 		
 	}
 
+	public String obtenerReunionesProfesor(int profesorId) {
+
+	    Session session = session();
+
+		List<Object[]> resultado = session .createQuery(Querys.REUNIONES_PROFESOR, Object[].class) .setParameter("profesorId", profesorId) .getResultList();
+		//Object porque la query devuelve varias columnas, no un objeto concreto. Devuelve hora, dia y modulo
+		String json = new Gson().toJson(resultado);
+		
+		return json;
+		
+	}
 	
 
 

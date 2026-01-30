@@ -42,17 +42,41 @@ public class PanelReuniones extends JPanel {
         }
         //Crear la tabla con scroll pane
         tablaReuniones = new JTable(modeloReuniones);
-        tablaReuniones.setEnabled(false);
         tablaReuniones.setRowHeight(40);
         tablaReuniones.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         tablaReuniones.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
+        tablaReuniones.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() { 
+        /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+		@Override public java.awt.Component getTableCellRendererComponent(
+        		JTable table, Object value, boolean isSelected,
+        		boolean hasFocus, int row, int column) {
+        	java.awt.Component c = super.getTableCellRendererComponent( 
+        			table, value, isSelected, hasFocus, row, column);
+        	String texto = (value == null) ? "" : value.toString().toUpperCase();
+        	c.setBackground(java.awt.Color.WHITE);
+        	
+        	if (texto.contains("REUNIÓN") && texto.contains("/")) {
+        		c.setBackground(new java.awt.Color(200, 200, 200)); //Una reunion con asignatura color GRIS
+        	} else if (texto.contains("REUNIÓN")) {
+        		c.setBackground(new java.awt.Color(255, 230, 180)); //Una reunion sin asignatura color naranja 
+        	} else if (!texto.isEmpty() && column > 0) {
+        		c.setBackground(java.awt.Color.WHITE); //Sin reuniones
+        	} 
+        	return c; 
+        	} 
+        });
+        
         JScrollPane scroll = new JScrollPane(tablaReuniones);
-        scroll.setEnabled(false);
-        scroll.setBounds(100, 80, 950, 366);
+        scroll.setBounds(97, 80, 953, 305);
         add(scroll);
         
         ctr.cargarHorario(profesorId, modeloReuniones);
+        ctr.cargarReuniones(profesorId, modeloReuniones);
         
 	}
 	

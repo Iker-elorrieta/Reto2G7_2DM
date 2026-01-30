@@ -5,7 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.Socket;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -288,7 +292,119 @@ public class Controlador {
 	    }
 	}
 
+	/*============================CARGAR REUNIONES ==============================*/
+	public void cargarReuniones(int profesorId, DefaultTableModel modeloHorario) {
+		// TODO Auto-generated method stub
+		
+		//Creamos un json de una peticion, luego el servidor leera el json y
+		//dependiendo de lo que pida el json, hara una cosa u otra
+		
+		//Creamos el map de la peticion
+		Map<String, Object> peticionReuniones = Map.of(
+	            "accion", "REUNIONES_PROFESOR",
+	            "profeId", profesorId
+				);
+		
+		//Convertimos la peticion a json
+		String jsonPeticion = new Gson().toJson(peticionReuniones);
 
+		//Enviamos al servidor el json de la peticion
+		try {
+			DataOutputStream enviaParametro = new DataOutputStream(cliente.getOutputStream());
+			enviaParametro.writeUTF(jsonPeticion);
+				
+			//recibimos la respuesta (linea 99 en HiloServidor.java)
+			DataInputStream recibeParametro = new DataInputStream(cliente.getInputStream());
+			String jsonRespuestaReuniones = recibeParametro.readUTF();
+
+			//Parseamos la respuesta
+			JsonObject respuesta = new Gson().fromJson(jsonRespuestaReuniones, JsonObject.class);
+
+			//Comprobamos el estado de la respuesta del servidor
+			String status = respuesta.get("status").getAsString(); 
+			if (!status.equals("OK")) { 
+				System.out.println("Error: " + respuesta.get("mensaje").getAsString());
+				return; 
+			}
+
+			//Obtenemos la lista de Horario
+			//Se hace 2 veces porque la respuesta json que envia el servidor tiene otro json dentro
+			JsonArray reunionesArray = respuesta.getAsJsonArray("reuniones");
+
+			//El json de horario que esta dentro de la respuesta del servidor
+			Type tipoLista = new TypeToken<List<List<Object>>>(){}.getType();
+			List<List<Object>> listaReuniones = new Gson().fromJson(reunionesArray, tipoLista);
+
+
+			//Rellenar tabla
+			//Mapa dia en columnas
+			Map<String, Integer> columna = Map.of(
+					"LUNES", 1,
+		            "MARTES", 2,
+		            "MIERCOLES", 3,
+		            "JUEVES", 4,
+		            "VIERNES", 5
+		        );
+			//Mapa DayOfWeek rellena la tabla 
+			Map<DayOfWeek, String> dias = Map.of(
+					DayOfWeek.MONDAY, "LUNES",
+					DayOfWeek.TUESDAY, "MARTES",
+					DayOfWeek.WEDNESDAY, "MIERCOLES",
+					DayOfWeek.THURSDAY, "JUEVES",
+					DayOfWeek.FRIDAY, "VIERNES"
+			);
+			
+		        
+			for (List<Object> fila : listaReuniones) { 
+				// Fecha completa que recibimos 
+				String fechaString = fila.get(0).toString();
+				
+				// Limpia espacios raros como U+202F
+				fechaString = fechaString.replace("\u202F", " ");
+				fechaString = fechaString.replaceAll("\\s+", " ");
+				
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+						"MMM d, yyyy, h:mm:ss a",
+						Locale.ENGLISH
+				);
+				LocalDateTime fecha = LocalDateTime.parse(fechaString, formatter);		
+				int horaReal = fecha.getHour();
+				DayOfWeek diaEnum = fecha.getDayOfWeek();
+				
+				// Cogemos los dias de la fecha completa
+				String diaTexto = dias.get(diaEnum);
+				if (diaTexto == null) continue; // if si es sabado o domingo se convierte en null
+				
+				int dia = columna.get(diaTexto);
+				
+				//Convierte hora real a la fila de la tabla
+				int horaTabla = horaReal - 7; // si la hora que recibimos es 8:00 = 1
+				int filaTabla = horaTabla - 1;
+				
+				
+				if (filaTabla < 0 || filaTabla >= modeloHorario.getRowCount()) continue;
+				
+				//Titulo para la reunion
+				Object tituloObj = fila.get(1);
+				String titulo = (tituloObj == null) ? "Reunión" : tituloObj.toString();
+				
+				//Lee lo que ya hay en la celda 
+				Object actualObj = modeloHorario.getValueAt(filaTabla, dia);
+				String actual = (actualObj == null) ? "" : actualObj.toString();
+				
+				//rellena la tabla 
+				if (actual != null && !actual.isEmpty()) {
+					modeloHorario.setValueAt(actual + " / REUNIÓN: " + titulo, horaTabla - 1, dia);
+				} else {
+					modeloHorario.setValueAt("REUNIÓN: " + titulo, horaTabla - 1, dia);
+				}
+			}
+		        
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
 
 
 }

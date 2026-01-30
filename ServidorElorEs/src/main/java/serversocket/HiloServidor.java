@@ -105,6 +105,15 @@ public class HiloServidor extends Thread{
                         	Map<String, Object> respuestaProfesores = ctr.obtenerListaProfesores();
 							enviaParametro.writeUTF(new Gson().toJson(respuestaProfesores));
 							break;
+							
+						//============ OBTENER HORARIO DE PROFESOR ===========//
+                            
+                        case "REUNIONES_PROFESOR":
+                            int profesId = ((Double) peticion.get("profeId")).intValue();
+                           String respuestaReuniones = ctr.obtenerReunionesProfesor(profesId);
+                            //(Linea 185 en ElorEs Controlador.java)
+                            enviaParametro.writeUTF(respuestaReuniones);
+                            break;
 
                         default:
                             System.out.println("no reconocida: " + accion);

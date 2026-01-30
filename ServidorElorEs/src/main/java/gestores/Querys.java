@@ -25,4 +25,10 @@ public class Querys {
 		    "FROM Horarios h " +
 		    "JOIN h.modulos mo " +
 		    "WHERE h.users = :profesor";
+	
+	public static final String REUNIONES_PROFESOR =
+			"SELECT r.fecha, r.titulo, r.asunto, r.aula "  +
+			"FROM Reuniones r " +
+			"WHERE r.usersByProfesorId.id = :profesorId " +
+			"ORDER BY r.fecha";
 }
