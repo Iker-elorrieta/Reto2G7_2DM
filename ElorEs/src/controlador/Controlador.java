@@ -424,104 +424,137 @@ public class Controlador {
 
 	
 	//==========================RELLENAMOS DE ALUMNOS EL COMBOBOX DE CREAR REUNIONES======================== 
-	public void cargarAlumnosEnCombo(int profesorId, JComboBox<Object> comboBoxAlumnos) {
+	public void cargarAlumnosEnCombo(int profesorId, JComboBox<Object> comboBoxAlumnos, Map<String, Integer> mapaAlumnos) {
 	    try {
+	    	
+	    	//============CONSTRUIR LA PETICION QUE SE ENVIARA AL SERVIDOR======================
 	        Map<String, Object> peticion = Map.of(
 	            "accion", "ALUMNOS_DE_PROFESOR",
 	            "profeId", profesorId
 	        );
 
+	        // Convertimos la petición a JSON para enviarla por el socket
 	        String jsonPeticion = new Gson().toJson(peticion);
-
+	        //==================================================================================
+	        
+	        
 	        DataOutputStream enviaParametro = new DataOutputStream(cliente.getOutputStream());
 	        enviaParametro.writeUTF(jsonPeticion);
+	        //==================================================================================
 
 	        DataInputStream recibeParametro = new DataInputStream(cliente.getInputStream());
 	        String jsonRespuesta = recibeParametro.readUTF();
 
+	        // Convertimos la respuesta JSON a un mapa genérico
 	        Type type = new TypeToken<Map<String, Object>>() {}.getType();
 	        Map<String, Object> respuesta = new Gson().fromJson(jsonRespuesta, type);
 
+	        // Si el servidor responde con error, lo mostramos y salimos
 	        if (!"OK".equals(respuesta.get("status"))) {
 	            System.out.println("Error: " + respuesta.get("mensaje"));
 	            return;
 	        }
 
+	        //===============EXTRAER LA LISTA DE ALUMNOS DE LA RESPUESTA======================
+	        // Volvemos a convertir la respuesta completa para acceder al campo alumnos
 	        Type tipoRespuestaCompleta = new TypeToken<Map<String, Object>>() {}.getType();
 	        Map<String, Object> respuestaServidor = new Gson().fromJson(jsonRespuesta, tipoRespuestaCompleta);
 
+	        // El campo "alumnos" es una lista de mapas (cada mapa = un alumno)
 	        Type tipoListaAlumnos = new TypeToken<List<Map<String, Object>>>() {}.getType();
 	        List<Map<String, Object>> alumnos = new Gson().fromJson(
 	            new Gson().toJson(respuestaServidor.get("alumnos")),
 	            tipoListaAlumnos
 	        );
-
+	        //================================================================================
+	        
+	        //=================LIMPIAR EL COMBOBOX Y EL MAPA ANTES DE RELLENARLOS=============
 	        comboBoxAlumnos.removeAllItems();
+	        mapaAlumnos.clear();
+	        //================================================================================
 
+	        //==================RELLENAR EL COMBOBOX Y EL MAPA  CON LOS ALUMNOS==============
 	        for (Map<String, Object> alum : alumnos) {
+	            int id = ((Double) alum.get("id")).intValue(); // ID REAL
+	            
+	            // Nombre y apellidos del alumno
 	            String nombre = (String) alum.get("nombre");
 	            String apellidos = (String) alum.get("apellidos");
 
-	            comboBoxAlumnos.addItem(nombre + " " + apellidos);
+	            // Construimos el nombre completo para mostrarlo en el ComboBox
+	            String nombreCompleto = nombre + " " + apellidos;
+
+	            comboBoxAlumnos.addItem(nombreCompleto);
+	            
+	            mapaAlumnos.put(nombreCompleto, id); // GUARDAMOS EL ID
 	        }
+	        //================================================================================
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 	}
 
+
 //========================================================================================================
 	
 	
+	
+	
+	
 	//=============================CARGA LOS CENTROS PARA EL COMBOBOX DE REUNIONES============================
-	public void cargarCentrosEnCombo(JComboBox<Object> comboBoxCentros) {
-		try {
-			//Crear el cliente HTTP moderno (Java 11+)
-			HttpClient client = HttpClient.newHttpClient();
+	public void cargarCentrosEnCombo(JComboBox<Object> comboBoxCentros, Map<String, Integer> mapaCentros) {
+	    try {
+	    	
+	    	//====================CREAR EL CLIENTE HTTP PARA HACER LA PETICION=================
+	        HttpClient client = HttpClient.newHttpClient();
 
-			//Construir la petición GET al servidor Spring Boot
-			HttpRequest request = HttpRequest.newBuilder()
-			        .uri(URI.create("http://localhost:8080/centros"))
-			        .GET()
-			        .build();
+	        HttpRequest request = HttpRequest.newBuilder()
+	                .uri(URI.create("http://localhost:8080/centros"))
+	                .GET()
+	                .build();
 
-			//Enviar la petición y recibir la respuesta como String
-			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-			
-			//Obtener el cuerpo de la respuesta (JSON)
-			String respuesta = response.body();
+	        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+	        String respuesta = response.body();
 
-			//Mostrar el JSON recibido (útil para depurar)
-			System.out.println("JSON recibido del servidor:");
-			System.out.println(respuesta);
+	        //=================================================================================
+	        
+	        
+	        //====================CONVERTIR EL JSON A UNA LISTA DE MAPAS=======================
+	        //Indicamos a Gson que queremos convertir el JSON a: 
+	        //List<Map<String, Object>>
+	        Type tipoListaCentros = new TypeToken<List<Map<String, Object>>>() {}.getType();
+	        List<Map<String, Object>> centros = new Gson().fromJson(respuesta, tipoListaCentros);
+	        
+	        // Limpiamos el ComboBox y el mapa antes de cargar nuevos datos
+	        comboBoxCentros.removeAllItems();
+	        mapaCentros.clear();
+	        //=================================================================================
+	        
+	        //====================RELLENAR EL COMBOBOX Y EL MAPA CON LOS CENTROS===============
+	        for (Map<String, Object> centro : centros) {
+	            int id = ((Double) centro.get("ccen")).intValue();  // ID REAL
+	            String nombre = (String) centro.get("nom");        // NOMBRE DEL CENTRO
 
-			
-			
-			
-			//Parsear JSON a lista de Map
-			Type tipoListaCentros = new TypeToken<List<Map<String, Object>>>() {}.getType(); 
-			List<Map<String, Object>> centros = new Gson().fromJson(respuesta.toString(), tipoListaCentros);
-		
-			//  Limpiar combo
-			comboBoxCentros.removeAllItems();
-			//  Añadir centros al combo
-			for (Map<String, Object> centro : centros) {
-				System.out.println("Centro recibido: " + centro.get("nom"));
-				comboBoxCentros.addItem(centro.get("nom"));
-			}
-			
-			
-			
-			for (int i = 0; i < comboBoxCentros.getItemCount(); i++) {
-				String item = comboBoxCentros.getItemAt(i).toString().trim();
-				if (item.contains("elorrieta") || item.contains("errekamari")) {
-					comboBoxCentros.setSelectedIndex(i);
-					break;
-				}	
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	            comboBoxCentros.addItem(nombre);
+	            mapaCentros.put(nombre, id);                      // GUARDAMOS EL ID
+	        }
+	        //================================================================================
+	        
+	        //============SELECCIONAR AUTOMATICAMENTE EL CENTRO DE ELORRIETA=================
+	        // Seleccionar automáticamente Elorrieta/Errekamari
+	        for (int i = 0; i < comboBoxCentros.getItemCount(); i++) {
+	            String item = comboBoxCentros.getItemAt(i).toString().trim().toLowerCase();
+	            if (item.contains("elorrieta") || item.contains("errekamari")) {
+	                comboBoxCentros.setSelectedIndex(i);
+	                break;
+	            }
+	        }
+	        //===============================================================================
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
+
 	//==========================================================================================
 }

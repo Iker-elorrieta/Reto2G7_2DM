@@ -141,7 +141,29 @@ public class Reuniones implements java.io.Serializable {
 	}
 
 	public void setUpdatedAt(Timestamp updatedAt) {
-		this.updatedAt = updatedAt;
+	    this.updatedAt = updatedAt;
 	}
+
+	// Guarda directamente el ID del alumno en la columna alumno_id
+	public void setAlumno_id(Integer id) {
+	    // Creamos un Users solo con el ID
+	    Users u = new Users();
+	    u.setId(id);
+	    this.usersByAlumnoId = u;
+	}
+
+	// Guarda directamente el ID del profesor en la columna profesor_id
+	public void setProfesor_id(Integer id) {
+	    Users u = new Users();
+	    u.setId(id);
+	    this.usersByProfesorId = u;
+	}
+
+	// Guarda directamente el ID del centro en la columna id_centro
+	public void setId_centro(Integer idCentro) {
+	    this.idCentro = String.valueOf(idCentro);
+	}
+
+
 
 }
