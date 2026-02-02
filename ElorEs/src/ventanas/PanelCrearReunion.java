@@ -3,16 +3,18 @@ package ventanas;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import java.awt.CardLayout;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+
+import com.toedter.calendar.JDateChooser;
 
 import controlador.Controlador;
 
@@ -106,6 +108,28 @@ public class PanelCrearReunion extends JPanel {
 		JComboBox<Object> comboBoxEstado = new JComboBox<Object>();
 		comboBoxEstado.setBounds(260, 302, 300, 28);
 		panelCard.add(comboBoxEstado);
+		comboBoxEstado.addItem("Pendiente");
+		comboBoxEstado.addItem("Conflicto");
+		comboBoxEstado.addItem("Aceptada");
+		comboBoxEstado.addItem("Cancelada");
+		
+		JDateChooser dateChooser = new JDateChooser();
+		dateChooser.setDateFormatString("dd/MM/yyyy");
+		dateChooser.setBounds(260, 340, 150, 28);
+		panelCard.add(dateChooser);
+		
+		String[] horas = new String[24];
+		for (int i = 0; i < 24; i++) {
+			horas[i] = String.format("%02d:00", i);
+		}
+		JComboBox<String> comboHora = new JComboBox<>(horas);
+		comboHora.setBounds(426, 339, 100, 28);
+		panelCard.add(comboHora);
+		
+		Date fecha = dateChooser.getDate();
+		String hora = comboHora.getSelectedItem().toString();
+		System.out.println("Fecha: " + fecha);
+		System.out.println("Hora: " + hora);
 		
 		 JButton btnNewButton = new JButton("Volver");
 		 btnNewButton.setBounds(67, 419, 89, 30);
