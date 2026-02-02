@@ -13,6 +13,9 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+
+import controlador.Controlador;
+
 import javax.swing.JComboBox;
 
 public class PanelCrearReunion extends JPanel {
@@ -20,8 +23,9 @@ public class PanelCrearReunion extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JTextField txtTitulo;
 	private JTextField txtTema;
+	private JTextField txtAula;
 
-	public PanelCrearReunion(Map<String, Object> usuarioMap, CardLayout cardLayout, JPanel panelPrincipal){
+	public PanelCrearReunion(Map<String, Object> usuarioMap, int profesorId, CardLayout cardLayout, JPanel panelPrincipal, Controlador ctr){
 		
 		setLayout(null);
 	    setBounds(0, 0, 1144, 588);
@@ -89,19 +93,17 @@ public class PanelCrearReunion extends JPanel {
 		lblDaYHora.setBounds(120, 340, 120, 20);
 		panelCard.add(lblDaYHora);
 		
-		JComboBox comboBoxAlumnos = new JComboBox();
+		JComboBox<Object> comboBoxAlumnos = new JComboBox<Object>();
 		comboBoxAlumnos.setBounds(260, 96, 300, 28);
 		panelCard.add(comboBoxAlumnos);
+		ctr.cargarAlumnosEnCombo(profesorId, comboBoxAlumnos);
 		
-		JComboBox comboBoxAula = new JComboBox();
-		comboBoxAula.setBounds(260, 219, 300, 28);
-		panelCard.add(comboBoxAula);
+		JComboBox<Object> comboBoxUbicacion = new JComboBox<Object>();
+		comboBoxUbicacion.setBounds(260, 260, 300, 28);
+		panelCard.add(comboBoxUbicacion);
+		ctr.cargarCentrosEnCombo(comboBoxUbicacion);
 		
-		JComboBox comboBoxAlumnos_1 = new JComboBox();
-		comboBoxAlumnos_1.setBounds(260, 260, 300, 28);
-		panelCard.add(comboBoxAlumnos_1);
-		
-		JComboBox comboBoxEstado = new JComboBox();
+		JComboBox<Object> comboBoxEstado = new JComboBox<Object>();
 		comboBoxEstado.setBounds(260, 302, 300, 28);
 		panelCard.add(comboBoxEstado);
 		
@@ -116,5 +118,9 @@ public class PanelCrearReunion extends JPanel {
 	        btnNewButton.setForeground(new Color(255, 255, 255));
 	        btnNewButton.setBackground(new Color(0, 128, 192));
 	        btnNewButton.setFont(new Font("Arial", Font.BOLD, 13));
+	        
+	        txtAula = new JTextField();
+	        txtAula.setBounds(260, 219, 300, 28);
+	        panelCard.add(txtAula);
 	}
 }

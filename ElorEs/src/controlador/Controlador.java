@@ -5,12 +5,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.Socket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -416,5 +422,106 @@ public class Controlador {
 	
 	//===================================================================
 
+	
+	//==========================RELLENAMOS DE ALUMNOS EL COMBOBOX DE CREAR REUNIONES======================== 
+	public void cargarAlumnosEnCombo(int profesorId, JComboBox<Object> comboBoxAlumnos) {
+	    try {
+	        Map<String, Object> peticion = Map.of(
+	            "accion", "ALUMNOS_DE_PROFESOR",
+	            "profeId", profesorId
+	        );
 
+	        String jsonPeticion = new Gson().toJson(peticion);
+
+	        DataOutputStream enviaParametro = new DataOutputStream(cliente.getOutputStream());
+	        enviaParametro.writeUTF(jsonPeticion);
+
+	        DataInputStream recibeParametro = new DataInputStream(cliente.getInputStream());
+	        String jsonRespuesta = recibeParametro.readUTF();
+
+	        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+	        Map<String, Object> respuesta = new Gson().fromJson(jsonRespuesta, type);
+
+	        if (!"OK".equals(respuesta.get("status"))) {
+	            System.out.println("Error: " + respuesta.get("mensaje"));
+	            return;
+	        }
+
+	        Type tipoRespuestaCompleta = new TypeToken<Map<String, Object>>() {}.getType();
+	        Map<String, Object> respuestaServidor = new Gson().fromJson(jsonRespuesta, tipoRespuestaCompleta);
+
+	        Type tipoListaAlumnos = new TypeToken<List<Map<String, Object>>>() {}.getType();
+	        List<Map<String, Object>> alumnos = new Gson().fromJson(
+	            new Gson().toJson(respuestaServidor.get("alumnos")),
+	            tipoListaAlumnos
+	        );
+
+	        comboBoxAlumnos.removeAllItems();
+
+	        for (Map<String, Object> alum : alumnos) {
+	            String nombre = (String) alum.get("nombre");
+	            String apellidos = (String) alum.get("apellidos");
+
+	            comboBoxAlumnos.addItem(nombre + " " + apellidos);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+
+//========================================================================================================
+	
+	
+	//=============================CARGA LOS CENTROS PARA EL COMBOBOX DE REUNIONES============================
+	public void cargarCentrosEnCombo(JComboBox<Object> comboBoxCentros) {
+		try {
+			//Crear el cliente HTTP moderno (Java 11+)
+			HttpClient client = HttpClient.newHttpClient();
+
+			//Construir la petición GET al servidor Spring Boot
+			HttpRequest request = HttpRequest.newBuilder()
+			        .uri(URI.create("http://localhost:8080/centros"))
+			        .GET()
+			        .build();
+
+			//Enviar la petición y recibir la respuesta como String
+			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			
+			//Obtener el cuerpo de la respuesta (JSON)
+			String respuesta = response.body();
+
+			//Mostrar el JSON recibido (útil para depurar)
+			System.out.println("JSON recibido del servidor:");
+			System.out.println(respuesta);
+
+			
+			
+			
+			//Parsear JSON a lista de Map
+			Type tipoListaCentros = new TypeToken<List<Map<String, Object>>>() {}.getType(); 
+			List<Map<String, Object>> centros = new Gson().fromJson(respuesta.toString(), tipoListaCentros);
+		
+			//  Limpiar combo
+			comboBoxCentros.removeAllItems();
+			//  Añadir centros al combo
+			for (Map<String, Object> centro : centros) {
+				System.out.println("Centro recibido: " + centro.get("nom"));
+				comboBoxCentros.addItem(centro.get("nom"));
+			}
+			
+			
+			
+			for (int i = 0; i < comboBoxCentros.getItemCount(); i++) {
+				String item = comboBoxCentros.getItemAt(i).toString().trim();
+				if (item.contains("elorrieta") || item.contains("errekamari")) {
+					comboBoxCentros.setSelectedIndex(i);
+					break;
+				}	
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	//==========================================================================================
 }
