@@ -24,6 +24,8 @@ public class ControladorReuniones {
 	    return listaReuniones;
 	}
 	
+	
+	
 	private Session session() {
 		// TODO Auto-generated method stub
 		SessionFactory sesion = HibernateUtil.getSessionFactory();

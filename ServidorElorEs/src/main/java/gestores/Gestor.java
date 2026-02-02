@@ -9,7 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import com.example.ProyectoSpringboot.modelo.Users;
-
+import com.google.gson.Gson;
 
 import controlador.HibernateUtil;
 
@@ -18,14 +18,19 @@ public class Gestor {
 
     //============ GESTOR LOGIN ===========//
    
-	public List<Map<String, Object>> obtenerUsuarios() {
+	public List<Map<String, Object>> obtenerProfesores() {
+		
+		//Gestion de la conexion a la base de datos
 	    Session session = session();
-	    String todosUsuarios = Querys.TODOS_USERS;
-	    List<Users> listaUsuarios = session.createQuery(todosUsuarios, Users.class).list();
+	    
+	    //Query para obtener solo los profesores
+	    String todosProfesores = Querys.PROFESORES;
+	    List<Users> listaProfesores = session.createQuery(todosProfesores, Users.class).list();
 
 	    List<Map<String, Object>> listaMap = new ArrayList<>();
 
-	    for (Users u : listaUsuarios) {
+	    //Obtenemos todos los datos de los profesores y los guardamos en la lista
+	    for (Users u : listaProfesores) {
 	        Map<String, Object> map = new HashMap<>();
 	        map.put("id", u.getId());
 	        map.put("username", u.getUsername());
@@ -40,7 +45,6 @@ public class Gestor {
 	        map.put("dni", u.getDni());
 	        listaMap.add(map);
 	    }
-
 	    return listaMap;
 	}
 	
@@ -49,12 +53,16 @@ public class Gestor {
 	public List<Map<String, Object>> obtenerAlumnosProfesor(int profeId) {
 		// TODO Auto-generated method stub
 		Session session = session();
+		//Query para obtener los alumnos de un profesor concreto
 		String alumnosProfesor = Querys.ALUMNOS_DE_PROFESOR;
 		
-		List<Object[]> listaAlumnos = session.createQuery(alumnosProfesor, Object[].class).setParameter("profeId", profeId).getResultList();
+		Users profesorObj = session.get(Users.class, profeId);
+
+		List<Object[]> listaAlumnos = session.createQuery(alumnosProfesor, Object[].class).setParameter("profesor", profesorObj).getResultList();
 		
 		List<Map<String, Object>> listaMap = new ArrayList<>();
 
+		//Recorremos la lista de alumnos y los guardamos en un map
 		for (Object[] fila: listaAlumnos) {
 			Map<String, Object> map = new HashMap<>();
 			map.put("id", fila[0]);
@@ -68,11 +76,48 @@ public class Gestor {
 		return listaMap;
 	}
 	
-    private Session session() {
-		// TODO Auto-generated method stub
-		SessionFactory sesion = HibernateUtil.getSessionFactory();
-		Session session = sesion.openSession();
-		return session;
+   
+	//============ OBTENER HORARIO DEL PROFESOR (ID) ===========//
+
+
+	public String obtenerHorarioProfesor(int profesorId) {
+
+	    Session session = session();
+	   
+	    
+		Users profesorObj = session.get(Users.class, profesorId);
+
+		List<Object[]> resultado = session .createQuery(Querys.HORARIO_PROFESOR, Object[].class) .setParameter("profesor", profesorObj) .getResultList();
+		//Object porque la query devuelve varias columnas, no un objeto concreto. Devuelve hora, dia y modulo
+		String json = new Gson().toJson(resultado);
+		
+		return json;
+		
 	}
+
+	public String obtenerReunionesProfesor(int profesorId) {
+
+	    Session session = session();
+
+		List<Object[]> resultado = session .createQuery(Querys.REUNIONES_PROFESOR, Object[].class) .setParameter("profesorId", profesorId) .getResultList();
+		//Object porque la query devuelve varias columnas, no un objeto concreto. Devuelve hora, dia y modulo
+		String json = new Gson().toJson(resultado);
+		
+		return json;
+		
+	}
+	
+
+
+	
+	
+	 private Session session() {
+			// TODO Auto-generated method stub
+			SessionFactory sesion = HibernateUtil.getSessionFactory();
+			Session session = sesion.openSession();
+			return session;
+		}
+
+
  
 }

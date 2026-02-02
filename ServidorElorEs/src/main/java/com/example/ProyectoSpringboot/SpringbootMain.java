@@ -16,5 +16,4 @@ public class SpringbootMain {
 		SocketServer socketserver = new SocketServer();
 		socketserver.start();
 	}
-
 }

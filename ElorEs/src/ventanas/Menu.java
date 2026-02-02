@@ -28,8 +28,12 @@ public class Menu extends JFrame {
     private CardLayout cardLayout;
 
     public Menu(Map<String, Object> usuarioMap, Socket cliente, Controlador ctr) {
+        
+    	//Obtener el ID del profesor
+    	int profesorId = ((Double) usuarioMap.get("id")).intValue();
     	
-    	// Arreglar color azul del menú 
+    	
+    	// Arreglar color azul del menu
     	UIManager.put("Menu.selectionBackground", new Color(0, 128, 192)); 
     	UIManager.put("MenuItem.selectionBackground", new Color(0, 100, 160)); 
     	UIManager.put("Menu.selectionForeground", Color.WHITE); 
@@ -43,7 +47,7 @@ public class Menu extends JFrame {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(null);
 
-        // Fondo general elegante
+        // Fondo general
         contentPane.setBackground(new Color(40, 40, 40));
         setContentPane(contentPane);
 
@@ -64,45 +68,58 @@ public class Menu extends JFrame {
         //---------------------------------------------------------
         //    PANEL HORARIOS
         //----------------------------------------------------------
-        PanelHorarios panelHorarios = new PanelHorarios(usuarioMap);
+        PanelHorarios panelHorarios = new PanelHorarios(profesorId, ctr, cardLayout, panelPrincipal);
 
         //---------------------------------------------------------
         //    PANEL OTROS HORARIOS
         //----------------------------------------------------------
-        PanelOtrosHorarios panelOtrosHorarios = new PanelOtrosHorarios(usuarioMap);
+        PanelOtrosHorarios panelOtrosHorarios = new PanelOtrosHorarios(ctr, cardLayout, panelPrincipal);
 
         //---------------------------------------------------------
         //    PANEL REUNIONES
         //----------------------------------------------------------
-        PanelReuniones panelReuniones = new PanelReuniones(usuarioMap);
+        PanelReuniones panelReuniones = new PanelReuniones(usuarioMap, profesorId, ctr, cardLayout, panelPrincipal);
         
         //---------------------------------------------------------
         //    PANEL PERFIL
         //----------------------------------------------------------
-        PanelPerfil panelPerfil = new PanelPerfil(usuarioMap);
+        PanelPerfil panelPerfil = new PanelPerfil(usuarioMap, ctr, cardLayout, panelPrincipal);
         
         //---------------------------------------------------------
         //    PANEL CREAR REUNION
         //----------------------------------------------------------
-        PanelCrearReunion panelCrearReunion = new PanelCrearReunion(usuarioMap);
+        PanelCrearReunion panelCrearReunion = new PanelCrearReunion(usuarioMap,cardLayout, panelPrincipal);
         
         //---------------------------------------------------------
-        //    PANEL ALUMNOS
+        //      PANEL ALUMNOS
         //----------------------------------------------------------
-        int profesorId = ((Double) usuarioMap.get("id")).intValue();
-        PanelAlumnos panelAlumnos = new PanelAlumnos(profesorId, ctr);
-        
+        PanelAlumnos panelAlumnos = new PanelAlumnos(profesorId, ctr, cardLayout, panelPrincipal);
+
+
         //--------------------------------------------------------
-        //    AÑADIR LOS PANELES AL CARDLAYOUT
+        //      AÑADIR LOS PANELES AL CARDLAYOUT
         //-------------------------------------------------------
-        
+
         panelPrincipal.add(panelHorarios, "horarios");
         panelPrincipal.add(panelOtrosHorarios, "otrosHorarios");
         panelPrincipal.add(panelReuniones, "reuniones");
         panelPrincipal.add(panelPerfil, "perfil");
         panelPrincipal.add(panelCrearReunion, "crear reunion");
         panelPrincipal.add(panelAlumnos, "alumnos");
-        
+
+        //---------------------------------------------------------
+        //      PANEL MENU 
+        //----------------------------------------------------------
+        JPanel panelMenu = new JPanel();
+        panelMenu.setBackground(new Color(50, 50, 50));
+        panelMenu.setLayout(null);
+        panelPrincipal.add(panelMenu, "menu");
+
+        //---------------------------------------------------------
+        //      MOSTRAR PANEL MENU POR DEFECTO
+        //----------------------------------------------------------
+        cardLayout.show(panelPrincipal, "menu");
+
 
         //---------------------------------------------------------
         //    BARRA DE MENU
@@ -215,9 +232,10 @@ public class Menu extends JFrame {
         });
         estilizarItem.accept(menuItemCrearReunion);
         mnNewMenu.add(menuItemCrearReunion);
+        
 
         //---------------------------------------------------------
-        //    BOTON DESCONECTAR (ELEGANTE + HOVER)
+        //    			BOTON DESCONECTAR 
         //--------------------------------------------------------
         
         JButton btnDesconectar = new JButton("Desconectar");
@@ -244,7 +262,7 @@ public class Menu extends JFrame {
 
         btnDesconectar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	//Lo enviamos al controlador
+            	//Gestionamos la desconexión en el controlador
             	ctr.cerrarSesion(cliente);
                 dispose();
             }

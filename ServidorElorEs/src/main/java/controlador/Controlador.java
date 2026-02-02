@@ -3,8 +3,14 @@ package controlador;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import gestores.Gestor;
 
@@ -14,41 +20,36 @@ public class Controlador {
 
     public Map<String, Object> verificarDatosLogIn(String usuario, String hashIntroducido) throws IOException {
 
-        //El gestor devuelve List<Map<String,Object>>
-        List<Map<String, Object>> usuarios = gestor.obtenerUsuarios();
-        if (usuarios == null) {
-        	return null;
+        //Llamamos al gestor para obtener la lista de profesores y la guardamos en una lista
+        List<Map<String, Object>> profesores = gestor.obtenerProfesores();
+        //Comprobamos que haya devuelto algo
+        if (profesores == null) {
+            return null;
         }
 
-        //Buscamos al usuario que coincida con el usuario introducido
-        for (Map<String, Object> u : usuarios) {
+        //Buscamos el profesor por username
+        for (Map<String, Object> prof : profesores) {
 
-            String usernameBD = (String) u.get("username");
-            String passwordBD = (String) u.get("password");
-            String tipo = (String) u.get("tipo");
+            String usernameBD =  (String) prof.get("username");
+            String passwordBD = (String) prof.get("password");
 
-            //Comprobamos que sea correcto
+            //Coincide el usuario?
             if (usernameBD.equals(usuario)) {
 
-                //Solo permite profesores
-                if (!tipo.equalsIgnoreCase("profesor")) {
-                    return null;
-                }
-
-                // Hasheo la contraseña de la BD
+                //Hashear la contraseña almacenada en BD
                 String pwdHashBD = hash(passwordBD);
 
-                // Comparo las contraseñas
+                //Comparar hashes
                 if (pwdHashBD.equals(hashIntroducido)) {
-                    return u; //Usuario valido 
+                    return prof; //Login correcto, este "prof" es el profesor correcto y la recogemos en el servidor
                 } else {
-                    return null;
+                    return null; //Contraseña incorrecta
                 }
             }
         }
-
-        return null; //Usuario no encontrado
+        return null; // Usuario no encontrado
     }
+
 
     
 
@@ -69,17 +70,80 @@ public class Controlador {
     }
 
 
-
+    
 	public Map<String, Object> obtenerAlumnosProfesor(int profeId) {
 		// TODO Auto-generated method stub
+		//Llamamos al gestor para obtener la lista de alumnos de ese profesor
 		List<Map<String, Object>> alumnos = gestor.obtenerAlumnosProfesor(profeId);
+		
 		if(alumnos == null) {
 			return null;
 		} else {
-			
+			//Devuelve un map con el estado OK y la lista de alumnos, "un json dentro de otro json"
 			return Map.of(
 					"status", "OK", 
 					"alumnos", alumnos);
 		}
 	}
+
+
+
+	public String obtenerHorarioProfesor(int profesorId) {
+
+	    String horario = gestor.obtenerHorarioProfesor(profesorId);
+	    JsonObject respuesta = new JsonObject();
+
+	    if (horario == null || horario.isEmpty()) {
+	    	respuesta.addProperty("status", "ERROR");
+	    	respuesta.addProperty("mensaje", "No se pudo obtener el horario");
+	    	} else { 
+	    		respuesta.addProperty("status", "OK");
+	    		JsonElement horarioJson = JsonParser.parseString(horario);
+	    		respuesta.add("horario", horarioJson); 
+	    		}
+
+	    String json = new Gson().toJson(respuesta); 
+	    return json;
+	    
+	}
+	
+	
+	public String obtenerReunionesProfesor(int profesorId) { 
+		String reuniones = gestor.obtenerReunionesProfesor(profesorId);
+		JsonObject respuesta = new JsonObject();
+		
+		if (reuniones == null || reuniones.isEmpty()) {
+			respuesta.addProperty("status", "ERROR");
+			respuesta.addProperty("mensaje", "No se pudieron obtener las reuniones");
+		} else {
+			respuesta.addProperty("status", "OK");
+			JsonElement reunionesJson = JsonParser.parseString(reuniones);
+			respuesta.add("reuniones", reunionesJson);
+		}
+		
+		String jsonReuniones = new Gson().toJson(respuesta);
+		return jsonReuniones;
+	}
+
+
+
+	public Map<String, Object> obtenerListaProfesores() {
+
+	    // Pedimos al gestor la lista de profesores
+	    List<Map<String, Object>> profesores = gestor.obtenerProfesores();
+
+	    Map<String, Object> respuesta = new HashMap<>();
+
+	    if (profesores == null) {
+	        respuesta.put("status", "ERROR");
+	        respuesta.put("mensaje", "No se pudo obtener la lista de profesores");
+	    } else {
+	        respuesta.put("status", "OK");
+	        respuesta.put("profesores", profesores);
+	    }
+
+	    return respuesta;
+	}
+
+
 }
