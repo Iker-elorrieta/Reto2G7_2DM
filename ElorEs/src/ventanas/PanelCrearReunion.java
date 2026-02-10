@@ -3,16 +3,31 @@ package ventanas;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Map;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import java.awt.CardLayout;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+
+import com.google.gson.JsonObject;
+import com.toedter.calendar.JDateChooser;
+
+import controlador.Controlador;
+
 import javax.swing.JComboBox;
 
 public class PanelCrearReunion extends JPanel {
@@ -20,8 +35,15 @@ public class PanelCrearReunion extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JTextField txtTitulo;
 	private JTextField txtTema;
+	private JTextField txtAula;
+	
+	//Hemos creado estos mapas para mostrar nombres en los comboBox,
+	//recuperar los IDs cuando seleccionas algo,
+	//y enviar esos IDs al backend en el JSON
+	private Map<String, Integer> mapaAlumnos = new java.util.HashMap<>();
+	private Map<String, Integer> mapaCentros = new java.util.HashMap<>();
 
-	public PanelCrearReunion(Map<String, Object> usuarioMap, CardLayout cardLayout, JPanel panelPrincipal){
+	public PanelCrearReunion(Map<String, Object> usuarioMap, int profesorId, CardLayout cardLayout, JPanel panelPrincipal, Controlador ctr){
 		
 		setLayout(null);
 	    setBounds(0, 0, 1144, 588);
@@ -89,21 +111,129 @@ public class PanelCrearReunion extends JPanel {
 		lblDaYHora.setBounds(120, 340, 120, 20);
 		panelCard.add(lblDaYHora);
 		
-		JComboBox comboBoxAlumnos = new JComboBox();
+		JComboBox<Object> comboBoxAlumnos = new JComboBox<Object>();
 		comboBoxAlumnos.setBounds(260, 96, 300, 28);
 		panelCard.add(comboBoxAlumnos);
+		ctr.cargarAlumnosEnCombo(profesorId, comboBoxAlumnos, mapaAlumnos);
+
+		JComboBox<Object> comboBoxUbicacion = new JComboBox<Object>();
+		comboBoxUbicacion.setBounds(260, 260, 300, 28);
+		panelCard.add(comboBoxUbicacion);
+		ctr.cargarCentrosEnCombo(comboBoxUbicacion, mapaCentros);
 		
-		JComboBox comboBoxAula = new JComboBox();
-		comboBoxAula.setBounds(260, 219, 300, 28);
-		panelCard.add(comboBoxAula);
-		
-		JComboBox comboBoxAlumnos_1 = new JComboBox();
-		comboBoxAlumnos_1.setBounds(260, 260, 300, 28);
-		panelCard.add(comboBoxAlumnos_1);
-		
-		JComboBox comboBoxEstado = new JComboBox();
+		JComboBox<Object> comboBoxEstado = new JComboBox<Object>();
 		comboBoxEstado.setBounds(260, 302, 300, 28);
 		panelCard.add(comboBoxEstado);
+		comboBoxEstado.addItem("Pendiente");
+		comboBoxEstado.addItem("Conflicto");
+		comboBoxEstado.addItem("Aceptada");
+		comboBoxEstado.addItem("Cancelada");
+		
+		JDateChooser dateChooser = new JDateChooser();
+		dateChooser.setDateFormatString("dd/MM/yyyy");
+		dateChooser.setBounds(260, 340, 150, 28);
+		panelCard.add(dateChooser);
+		
+		String[] horas = new String[24];
+		for (int i = 0; i < 24; i++) {
+			horas[i] = String.format("%02d:00", i);
+		}
+		JComboBox<String> comboHora = new JComboBox<>(horas);
+		comboHora.setBounds(426, 339, 100, 28);
+		panelCard.add(comboHora);
+		
+		Date fecha = dateChooser.getDate();
+		String hora = comboHora.getSelectedItem().toString();
+		System.out.println("Fecha: " + fecha);
+		System.out.println("Hora: " + hora);
+		
+		JButton btnCrear = new JButton("Crear reunión");
+		btnCrear.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+		            // =================Obtener IDs reales================
+		            String alumnoNombre = comboBoxAlumnos.getSelectedItem().toString(); //Obtenemos el nombre del alumnos seleccionado
+		            int alumnoId = mapaAlumnos.get(alumnoNombre); //Obtenemos el ID del alumno seleccionado
+
+		            String centroNombre = comboBoxUbicacion.getSelectedItem().toString();//Obtenemos el nombre del centro seleccionado
+		            int centroId = mapaCentros.get(centroNombre);//Obtenemos el ID del centro seleccionado
+
+		            //===================================================
+		            
+		            //===================OBTENEMOS EL RESTO DE CAMPOS DEL FORMULARIO=================
+		            String estado = comboBoxEstado.getSelectedItem().toString();
+		            String titulo = txtTitulo.getText();
+		            String tema = txtTema.getText();
+		            String aula = txtAula.getText();
+		            //===============================================================================
+		            
+		            
+		            //===================PROCESAMOS FECHA Y HORA=====================================
+		            Date fecha = dateChooser.getDate();
+		            if (fecha == null) {
+		                JOptionPane.showMessageDialog(null, "Selecciona una fecha");
+		                return;
+		            }
+		            // Obtener la hora seleccionada (formato HH:mm)
+		            String horaStr = comboHora.getSelectedItem().toString();
+		            LocalTime horaLocal = LocalTime.parse(horaStr);
+
+		            // Convertir Date -> LocalDate
+		            LocalDate fechaLocal = fecha.toInstant()
+		                    .atZone(ZoneId.systemDefault())
+		                    .toLocalDate();
+		            // Combinar fecha + hora en un LocalDateTime
+		            LocalDateTime fechaHora = LocalDateTime.of(fechaLocal, horaLocal);
+		            //===============================================================================
+		            
+		            
+		            //===================CONSTRUIR EL JSON QUE SE ENVIA AL BACKEND=================
+		            JsonObject json = new JsonObject();
+		            json.addProperty("profesor_id", profesorId);
+		            json.addProperty("alumno_id", alumnoId);
+		            json.addProperty("id_centro", centroId);
+		            json.addProperty("estado", estado);
+		            json.addProperty("titulo", titulo);
+		            json.addProperty("tema", tema);
+		            json.addProperty("aula", aula);
+		            json.addProperty("fecha", fechaHora.toString());
+
+		            // Convertimos el JSON a String para enviarlo
+		            String jsonString = json.toString();
+		            System.out.println("JSON enviado: " + jsonString);
+		            //==============================================================================
+		            
+		            //=====================ENVIAR LA PETICION HTTP AL BACKEND=======================
+		            HttpClient client = HttpClient.newHttpClient();
+
+		            HttpRequest request = HttpRequest.newBuilder()
+		                    .uri(URI.create("http://localhost:8080/reuniones"))
+		                    .header("Content-Type", "application/json")
+		                    .POST(HttpRequest.BodyPublishers.ofString(jsonString))
+		                    .build();
+
+		            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+		            //==============================================================================
+		            
+		            //======================COMPROBAR RESPUESTA DEL SERVIDOR=======================
+		            if (response.statusCode() == 200 || response.statusCode() == 201) {
+		                JOptionPane.showMessageDialog(null, "Reunión creada correctamente");
+		            } else {
+		                JOptionPane.showMessageDialog(null, "Error al crear la reunión: " + response.body());
+		            }
+		            //============================================================================
+		            
+		            
+		        } catch (Exception ex) {
+		            ex.printStackTrace();
+		            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+		        }
+		    }
+		});
+
+
+		btnCrear.setBounds(326, 400, 200, 35);
+		panelCard.add(btnCrear);
 		
 		 JButton btnNewButton = new JButton("Volver");
 		 btnNewButton.setBounds(67, 419, 89, 30);
@@ -116,5 +246,9 @@ public class PanelCrearReunion extends JPanel {
 	        btnNewButton.setForeground(new Color(255, 255, 255));
 	        btnNewButton.setBackground(new Color(0, 128, 192));
 	        btnNewButton.setFont(new Font("Arial", Font.BOLD, 13));
+	        
+	        txtAula = new JTextField();
+	        txtAula.setBounds(260, 219, 300, 28);
+	        panelCard.add(txtAula);
 	}
 }

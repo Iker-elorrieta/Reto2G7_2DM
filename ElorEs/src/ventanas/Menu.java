@@ -88,7 +88,7 @@ public class Menu extends JFrame {
         //---------------------------------------------------------
         //    PANEL CREAR REUNION
         //----------------------------------------------------------
-        PanelCrearReunion panelCrearReunion = new PanelCrearReunion(usuarioMap,cardLayout, panelPrincipal);
+        PanelCrearReunion panelCrearReunion = new PanelCrearReunion(usuarioMap,profesorId,cardLayout, panelPrincipal, ctr);
         
         //---------------------------------------------------------
         //      PANEL ALUMNOS
